@@ -10,14 +10,8 @@ export const SidebarData = [
 		submenuItems: [
 			{
 				label: "Dashboard",
+				link: "/admin-dashboard",
 				icon: <Icon.Grid />,
-				submenu: true,
-				showSubRoute: false,
-				submenuHdr: "Dashboard",
-				submenuItems: [
-					{ label: "Admin Dashboard", link: "/admin-dashboard" },
-					{ label: "Sales Dashboard", link: "/sales-dashboard" },
-				],
 			},
 		],
 	},
@@ -37,19 +31,6 @@ export const SidebarData = [
 				label: "Customers",
 				link: "/customers",
 				icon: <Icon.User />,
-				showSubRoute: false,
-				submenu: false,
-			},
-			{
-				label: "Users",
-				link: "/users",
-				icon: <Icon.UserCheck />,
-				showSubRoute: false,
-			},
-			{
-				label: "Roles & Permissions",
-				link: "/roles-permissions",
-				icon: <Icon.UserCheck />,
 				showSubRoute: false,
 			},
 		],

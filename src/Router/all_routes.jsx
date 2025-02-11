@@ -165,8 +165,6 @@ export const all_routes = {
 	profile: "/profile",
 	signin: "/signin",
 	register: "/register",
-	registerTwo: "/register-2",
-	registerThree: "/register-3",
 	forgotPassword: "/forgot-password",
 	forgotPasswordTwo: "/forgot-password-2",
 	forgotPasswordThree: "/forgot-password-3",

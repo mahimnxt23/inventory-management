@@ -107,11 +107,6 @@ export const SidebarData = [
 				icon: <Icon.User />,
 			},
 			{
-				label: "Notifications",
-				link: "/notification",
-				icon: <Icon.Bell />,
-			},
-			{
 				label: "Logout",
 				link: "/signin",
 				icon: <Icon.LogOut />,

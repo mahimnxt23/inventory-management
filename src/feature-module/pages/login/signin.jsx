@@ -84,7 +84,7 @@ const Signin = () => {
 									<div className="signinform">
 										<h4>
 											New on our platform?
-											<Link to={route.registerThree} className="hover-a">
+											<Link to={route.register} className="hover-a">
 												{" "}
 												Create an account
 											</Link>

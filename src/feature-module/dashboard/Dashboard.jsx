@@ -108,38 +108,30 @@ const Dashboard = () => {
 	});
 	const [recentProducts, setRecentProducts] = useState([]);
 	const [latestOrders, setLatestOrders] = useState([]);
-	const [expiredProducts, setExpiredProducts] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	// using useEffect hook for fetching data
 	useEffect(() => {
+		console.log("Fetching dashboard data...");
 		fetchDashboardData();
 	}, []);
 
 	const fetchDashboardData = async () => {
 		setLoading(true);
 		try {
-			// Fetch all data in parallel
-			const [statistics, products, orders, expired] = await Promise.all([
-				getData("/dashboard/statistics"),
-				getData("/products/recent"),
-				getData("/orders/latest"),
-				getData("/products/expired"),
-			]);
+			const [stats] = await Promise.all([getData("/total-counts")]);
+			// Debugging: Log the response from the API
+			console.log("API Response:", stats);
 
 			// Update all state variables with the fetched data
 			setDashboardData({
-				totalMedicines: statistics.totalMedicines,
-				totalBottles: statistics.totalBottles,
-				totalOrders: statistics.totalOrders,
-				revenueAmount: statistics.revenueAmount,
-				purchaseAmount: statistics.purchaseAmount,
-				salesAmount: statistics.salesAmount,
+				totalMedicines: stats.total_medicine_quantity,
+				totalBottles: stats.total_bottle_quantity,
+				totalOrders: stats.total_order,
+				revenueAmount: stats.total_purchase_amount,
+				purchaseAmount: stats.total_purchase_amount,
+				salesAmount: stats.total_sales_amount,
 			});
-			setRecentProducts(products);
-			setLatestOrders(orders);
-			setExpiredProducts(expired);
 		} catch (err) {
 			setError(err.message);
 		} finally {
@@ -164,7 +156,13 @@ const Dashboard = () => {
 								</div>
 								<div className="dash-widgetcontent">
 									<h5>
-										<CountUp start={0} end={307144} duration={3} prefix="# " />
+										{/* <CountUp start={0} end={307144} duration={3} prefix="# " /> */}
+										<CountUp
+											start={0}
+											end={dashboardData.totalMedicines}
+											duration={3}
+											prefix="# "
+										/>
 									</h5>
 									<h6>Total Medicines</h6>
 								</div>
@@ -182,7 +180,13 @@ const Dashboard = () => {
 								</div>
 								<div className="dash-widgetcontent">
 									<h5>
-										<CountUp start={0} end={307144} duration={3} prefix="# " />
+										{/* <CountUp start={0} end={307144} duration={3} prefix="# " /> */}
+										<CountUp
+											start={0}
+											end={dashboardData.totalBottles}
+											duration={3}
+											prefix="# "
+										/>
 									</h5>
 									<h6>Total Bottles of Medicines</h6>
 								</div>
@@ -200,7 +204,13 @@ const Dashboard = () => {
 								</div>
 								<div className="dash-widgetcontent">
 									<h5>
-										<CountUp start={0} end={307144} duration={3} prefix="# " />
+										{/* <CountUp start={0} end={307144} duration={3} prefix="# " /> */}
+										<CountUp
+											start={0}
+											end={dashboardData.totalOrders}
+											duration={3}
+											prefix="# "
+										/>
 									</h5>
 									<h6>Total Orders</h6>
 								</div>
@@ -218,8 +228,12 @@ const Dashboard = () => {
 								</div>
 								<div className="dash-widgetcontent">
 									<h5>
-										$
-										<CountUp start={0} end={4385} duration={3} />
+										${/* <CountUp start={0} end={4385} duration={3} /> */}
+										<CountUp
+											start={0}
+											end={dashboardData.revenueAmount}
+											duration={3}
+										/>
 									</h5>
 									<h6>Total Revenue Amount</h6>
 								</div>
@@ -238,9 +252,15 @@ const Dashboard = () => {
 								<div className="dash-widgetcontent">
 									<h5>
 										$
-										<CountUp
+										{/* <CountUp
 											start={0}
 											end={385656.5}
+											duration={3}
+											decimals={1}
+										/> */}
+										<CountUp
+											start={0}
+											end={dashboardData.purchaseAmount}
 											duration={3}
 											decimals={1}
 										/>
@@ -261,8 +281,12 @@ const Dashboard = () => {
 								</div>
 								<div className="dash-widgetcontent">
 									<h5>
-										$
-										<CountUp start={0} end={40000} duration={3} />
+										${/* <CountUp start={0} end={40000} duration={3} /> */}
+										<CountUp
+											start={0}
+											end={dashboardData.salesAmount}
+											duration={3}
+										/>
 									</h5>
 									<h6>Total Sales Amount</h6>
 								</div>

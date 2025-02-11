@@ -101,8 +101,6 @@ import Lockscreen from "../feature-module/pages/lockscreen";
 import Signin from "../feature-module/pages/login/signin";
 import Profile from "../feature-module/pages/profile";
 import Register from "../feature-module/pages/register/register";
-import RegisterThree from "../feature-module/pages/register/registerThree";
-import RegisterTwo from "../feature-module/pages/register/registerTwo";
 import Resetpassword from "../feature-module/pages/resetpassword/resetpassword";
 import ResetpasswordThree from "../feature-module/pages/resetpassword/resetpasswordThree";
 import ResetpasswordTwo from "../feature-module/pages/resetpassword/resetpasswordTwo";
@@ -114,16 +112,7 @@ import Customers from "../feature-module/people/customers";
 import PurchaseOrderReport from "../feature-module/purchases/purchaseorderreport";
 import PurchaseReturns from "../feature-module/purchases/purchasereturns";
 import PurchasesList from "../feature-module/purchases/purchaseslist";
-import CustomerReport from "../feature-module/Reports/customerreport";
-import ExpenseReport from "../feature-module/Reports/expensereport";
-import IncomeReport from "../feature-module/Reports/incomereport";
-import InventoryReport from "../feature-module/Reports/inventoryreport";
-import Invoicereport from "../feature-module/Reports/invoicereport";
-import ProfitLoss from "../feature-module/Reports/profitloss";
-import PurchaseReport from "../feature-module/Reports/purchasereport";
 import SalesReport from "../feature-module/Reports/salesreport";
-import SupplierReport from "../feature-module/Reports/supplierreport";
-import TaxReport from "../feature-module/Reports/taxreport";
 import InvoiceReport from "../feature-module/sales/invoicereport";
 import Pos from "../feature-module/sales/pos";
 import QuotationList from "../feature-module/sales/quotationlist";
@@ -1008,69 +997,6 @@ export const publicRoutes = [
 		route: Route,
 	},
 	{
-		id: 91,
-		path: routes.purchasereport,
-		name: "purchasereport",
-		element: <PurchaseReport />,
-		route: Route,
-	},
-	{
-		id: 92,
-		path: routes.inventoryreport,
-		name: "inventoryreport",
-		element: <InventoryReport />,
-		route: Route,
-	},
-	{
-		id: 93,
-		path: routes.invoicereport,
-		name: "invoicereport",
-		element: <Invoicereport />,
-		route: Route,
-	},
-	{
-		id: 94,
-		path: routes.supplierreport,
-		name: "supplierreport",
-		element: <SupplierReport />,
-		route: Route,
-	},
-	{
-		id: 95,
-		path: routes.customerreport,
-		name: "customerreport",
-		element: <CustomerReport />,
-		route: Route,
-	},
-	{
-		id: 96,
-		path: routes.expensereport,
-		name: "expensereport",
-		element: <ExpenseReport />,
-		route: Route,
-	},
-	{
-		id: 97,
-		path: routes.incomereport,
-		name: "incomereport",
-		element: <IncomeReport />,
-		route: Route,
-	},
-	{
-		id: 98,
-		path: routes.taxreport,
-		name: "taxreport",
-		element: <TaxReport />,
-		route: Route,
-	},
-	{
-		id: 99,
-		path: routes.profitloss,
-		name: "profitloss",
-		element: <ProfitLoss />,
-		route: Route,
-	},
-	{
 		id: 89,
 		path: routes.generalsettings,
 		name: "generalsettings",
@@ -1368,20 +1294,6 @@ export const pagesRoute = [
 		path: routes.register,
 		name: "register",
 		element: <Register />,
-		route: Route,
-	},
-	{
-		id: 5,
-		path: routes.registerTwo,
-		name: "registerTwo",
-		element: <RegisterTwo />,
-		route: Route,
-	},
-	{
-		id: 6,
-		path: routes.registerThree,
-		name: "registerThree",
-		element: <RegisterThree />,
 		route: Route,
 	},
 	{

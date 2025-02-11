@@ -1,7 +1,6 @@
 import React from "react";
 import { Navigate, Route } from "react-router-dom";
 import Dashboard from "../feature-module/dashboard/Dashboard";
-import SalesDashbaord from "../feature-module/dashboard/salesdashbaord";
 import AddProduct from "../feature-module/inventory/addproduct";
 import BrandList from "../feature-module/inventory/brandlist";
 import PrintBarcode from "../feature-module/inventory/printbarcode";
@@ -65,9 +64,6 @@ const routes = all_routes;
 import StoreList from "../core/modals/peoples/storelist";
 import WareHouses from "../core/modals/peoples/warehouses";
 import Email from "../feature-module/Application/email";
-import Coupons from "../feature-module/coupons/coupons";
-import ExpenseCategory from "../feature-module/FinanceAccounts/expensecategory";
-import ExpensesList from "../feature-module/FinanceAccounts/expenseslist";
 import AddEmployee from "../feature-module/hrm/addemployee";
 import AttendanceEmployee from "../feature-module/hrm/attendance-employee";
 import AttendanceAdmin from "../feature-module/hrm/attendanceadmin";
@@ -115,7 +111,6 @@ import TwostepverificationThree from "../feature-module/pages/twostepverificatio
 import TwostepverificationTwo from "../feature-module/pages/twostepverification/twostepverificationTwo";
 import Undermaintainence from "../feature-module/pages/undermaintainence";
 import Customers from "../feature-module/people/customers";
-import Suppliers from "../feature-module/people/suppliers";
 import PurchaseOrderReport from "../feature-module/purchases/purchaseorderreport";
 import PurchaseReturns from "../feature-module/purchases/purchasereturns";
 import PurchasesList from "../feature-module/purchases/purchaseslist";
@@ -214,13 +209,6 @@ export const publicRoutes = [
 		path: routes.addproduct,
 		name: "products",
 		element: <AddProduct />,
-		route: Route,
-	},
-	{
-		id: 4,
-		path: routes.salesdashboard,
-		name: "salesdashboard",
-		element: <SalesDashbaord />,
 		route: Route,
 	},
 	{
@@ -847,20 +835,6 @@ export const publicRoutes = [
 		route: Route,
 	},
 	{
-		id: 61,
-		path: routes.expenselist,
-		name: "expenselist",
-		element: <ExpensesList />,
-		route: Route,
-	},
-	{
-		id: 62,
-		path: routes.expensecategory,
-		name: "expensecategory",
-		element: <ExpenseCategory />,
-		route: Route,
-	},
-	{
 		id: 64,
 		path: routes.subcategories,
 		name: "subcategories",
@@ -1012,13 +986,6 @@ export const publicRoutes = [
 		path: routes.customers,
 		name: "customers",
 		element: <Customers />,
-		route: Route,
-	},
-	{
-		id: 85,
-		path: routes.suppliers,
-		name: "suppliers",
-		element: <Suppliers />,
 		route: Route,
 	},
 	{
@@ -1362,13 +1329,6 @@ export const publicRoutes = [
 		path: routes.warehouses,
 		name: "warehouses",
 		element: <WareHouses />,
-		route: Route,
-	},
-	{
-		id: 115,
-		path: routes.coupons,
-		name: "coupons",
-		element: <Coupons />,
 		route: Route,
 	},
 	{

@@ -1,22 +1,10 @@
-import { DatePicker } from "antd";
-import {
-	Calendar,
-	ChevronUp,
-	Filter,
-	PlusCircle,
-	RotateCcw,
-	Sliders,
-	StopCircle,
-	Zap,
-} from "feather-icons-react/build/IconComponents";
-import React, { useState } from "react";
+import { ChevronUp, RotateCcw } from "feather-icons-react/build/IconComponents";
+import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import Select from "react-select";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import AddCategoryList from "../../core/modals/inventory/addcategorylist";
 import EditCategoryList from "../../core/modals/inventory/editcategorylist";
 import Table from "../../core/pagination/datatable";
@@ -27,47 +15,6 @@ const CategoryList = () => {
 	const data = useSelector((state) => state.toggle_header);
 	const dataSource = useSelector((state) => state.categotylist_data);
 
-	const [isFilterVisible, setIsFilterVisible] = useState(false);
-	const toggleFilterVisibility = () => {
-		setIsFilterVisible((prevVisibility) => !prevVisibility);
-	};
-	const [selectedDate, setSelectedDate] = useState(new Date());
-	const handleDateChange = (date) => {
-		setSelectedDate(date);
-	};
-
-	const oldandlatestvalue = [
-		{ value: "date", label: "Sort by Date" },
-		{ value: "newest", label: "Newest" },
-		{ value: "oldest", label: "Oldest" },
-	];
-	const category = [
-		{ value: "chooseCategory", label: "Choose Category" },
-		{ value: "laptop", label: "Laptop" },
-		{ value: "electronics", label: "Electronics" },
-		{ value: "shoe", label: "Shoe" },
-	];
-	const status = [
-		{ value: "chooseStatus", label: "Choose Status" },
-		{ value: "active", label: "Active" },
-		{ value: "inactive", label: "Inactive" },
-	];
-
-	const renderTooltip = (props) => (
-		<Tooltip id="pdf-tooltip" {...props}>
-			Pdf
-		</Tooltip>
-	);
-	const renderExcelTooltip = (props) => (
-		<Tooltip id="excel-tooltip" {...props}>
-			Excel
-		</Tooltip>
-	);
-	const renderPrinterTooltip = (props) => (
-		<Tooltip id="printer-tooltip" {...props}>
-			Printer
-		</Tooltip>
-	);
 	const renderRefreshTooltip = (props) => (
 		<Tooltip id="refresh-tooltip" {...props}>
 			Refresh
@@ -85,11 +32,11 @@ const CategoryList = () => {
 			dataIndex: "category",
 			sorter: (a, b) => a.category.length - b.category.length,
 		},
-		{
-			title: "Sub Category",
-			dataIndex: "categoryslug",
-			sorter: (a, b) => a.categoryslug.length - b.categoryslug.length,
-		},
+		// {
+		// 	title: "Sub Category",
+		// 	dataIndex: "categoryslug",
+		// 	sorter: (a, b) => a.categoryslug.length - b.categoryslug.length,
+		// },
 		{
 			title: "Status",
 			dataIndex: "status",
@@ -167,33 +114,6 @@ const CategoryList = () => {
 						</div>
 						<ul className="table-top-head">
 							<li>
-								<OverlayTrigger placement="top" overlay={renderTooltip}>
-									<Link>
-										<ImageWithBasePath
-											src="assets/img/icons/pdf.svg"
-											alt="img"
-										/>
-									</Link>
-								</OverlayTrigger>
-							</li>
-							<li>
-								<OverlayTrigger placement="top" overlay={renderExcelTooltip}>
-									<Link data-bs-toggle="tooltip" data-bs-placement="top">
-										<ImageWithBasePath
-											src="assets/img/icons/excel.svg"
-											alt="img"
-										/>
-									</Link>
-								</OverlayTrigger>
-							</li>
-							<li>
-								<OverlayTrigger placement="top" overlay={renderPrinterTooltip}>
-									<Link data-bs-toggle="tooltip" data-bs-placement="top">
-										<i data-feather="printer" className="feather-printer" />
-									</Link>
-								</OverlayTrigger>
-							</li>
-							<li>
 								<OverlayTrigger placement="top" overlay={renderRefreshTooltip}>
 									<Link data-bs-toggle="tooltip" data-bs-placement="top">
 										<RotateCcw />
@@ -216,125 +136,10 @@ const CategoryList = () => {
 								</OverlayTrigger>
 							</li>
 						</ul>
-						<div className="page-btn">
-							<Link
-								to="#"
-								className="btn btn-added"
-								data-bs-toggle="modal"
-								data-bs-target="#add-category"
-							>
-								<PlusCircle className="me-2" />
-								Add New Category
-							</Link>
-						</div>
 					</div>
 					{/* /product list */}
 					<div className="card table-list-card">
 						<div className="card-body">
-							<div className="table-top">
-								<div className="search-set">
-									<div className="search-input">
-										<input
-											type="text"
-											placeholder="Search"
-											className="form-control form-control-sm formsearch"
-										/>
-										<Link to className="btn btn-searchset">
-											<i data-feather="search" className="feather-search" />
-										</Link>
-									</div>
-								</div>
-								<div className="search-path">
-									<Link
-										className={`btn btn-filter ${
-											isFilterVisible ? "setclose" : ""
-										}`}
-										id="filter_search"
-									>
-										<Filter
-											className="filter-icon"
-											onClick={toggleFilterVisibility}
-										/>
-										<span onClick={toggleFilterVisibility}>
-											<ImageWithBasePath
-												src="assets/img/icons/closes.svg"
-												alt="img"
-											/>
-										</span>
-									</Link>
-								</div>
-								<div className="form-sort">
-									<Sliders className="info-img" />
-									<Select
-										className="img-select"
-										classNamePrefix="react-select"
-										options={oldandlatestvalue}
-										placeholder="Newest"
-									/>
-								</div>
-							</div>
-							{/* /Filter */}
-							<div
-								className={`card${isFilterVisible ? " visible" : ""}`}
-								id="filter_inputs"
-								style={{ display: isFilterVisible ? "block" : "none" }}
-							>
-								<div className="card-body pb-0">
-									<div className="row">
-										<div className="col-lg-3 col-sm-6 col-12">
-											<div className="input-blocks">
-												<Zap className="info-img" />
-												<Select
-													className="img-select"
-													options={category}
-													classNamePrefix="react-select"
-													placeholder="Choose Category"
-												/>
-											</div>
-										</div>
-										<div className="col-lg-3 col-sm-6 col-12">
-											<div className="input-blocks">
-												<Calendar className="info-img" />
-												<div className="input-groupicon">
-													<DatePicker
-														selected={selectedDate}
-														onChange={handleDateChange}
-														type="date"
-														className="filterdatepicker"
-														dateFormat="dd-MM-yyyy"
-														placeholder="Choose Date"
-													/>
-												</div>
-											</div>
-										</div>
-										<div className="col-lg-3 col-sm-6 col-12">
-											<div className="input-blocks">
-												<StopCircle className="info-img" />
-
-												<Select
-													className="img-select"
-													options={status}
-													classNamePrefix="react-select"
-													placeholder="Choose Status"
-												/>
-											</div>
-										</div>
-										<div className="col-lg-3 col-sm-6 col-12 ms-auto">
-											<div className="input-blocks">
-												<Link className="btn btn-filters ms-auto">
-													{" "}
-													<i
-														data-feather="search"
-														className="feather-search"
-													/>{" "}
-													Search{" "}
-												</Link>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							{/* /Filter */}
 							<div className="table-responsive">
 								<Table columns={columns} dataSource={dataSource} />
 							</div>

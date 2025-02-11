@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import "bootstrap-daterangepicker/daterangepicker.css";
 import { Calendar } from "feather-icons-react/build/IconComponents";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import CountUp from "react-countup";
 import { ArrowRight } from "react-feather";
@@ -9,6 +10,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { all_routes } from "../../Router/all_routes";
+import { getData } from "../../utils/api";
 
 const Dashboard = () => {
 	const route = all_routes;
@@ -94,6 +96,55 @@ const Dashboard = () => {
 			position: "top",
 			horizontalAlign: "left",
 		},
+	};
+
+	const [dashboardData, setDashboardData] = useState({
+		totalMedicines: 0,
+		totalBottles: 0,
+		totalOrders: 0,
+		revenueAmount: 0,
+		purchaseAmount: 0,
+		salesAmount: 0,
+	});
+	const [recentProducts, setRecentProducts] = useState([]);
+	const [latestOrders, setLatestOrders] = useState([]);
+	const [expiredProducts, setExpiredProducts] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	// using useEffect hook for fetching data
+	useEffect(() => {
+		fetchDashboardData();
+	}, []);
+
+	const fetchDashboardData = async () => {
+		setLoading(true);
+		try {
+			// Fetch all data in parallel
+			const [statistics, products, orders, expired] = await Promise.all([
+				getData("/dashboard/statistics"),
+				getData("/products/recent"),
+				getData("/orders/latest"),
+				getData("/products/expired"),
+			]);
+
+			// Update all state variables with the fetched data
+			setDashboardData({
+				totalMedicines: statistics.totalMedicines,
+				totalBottles: statistics.totalBottles,
+				totalOrders: statistics.totalOrders,
+				revenueAmount: statistics.revenueAmount,
+				purchaseAmount: statistics.purchaseAmount,
+				salesAmount: statistics.salesAmount,
+			});
+			setRecentProducts(products);
+			setLatestOrders(orders);
+			setExpiredProducts(expired);
+		} catch (err) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -227,35 +278,12 @@ const Dashboard = () => {
 									<div className="graph-sets">
 										<div className="dropdown dropdown-wraper">
 											<button
-												className="btn btn-white btn-sm dropdown-toggle d-flex align-items-center"
+												className="btn btn-white btn-sm d-flex align-items-center"
 												type="button"
-												id="dropdown-sales"
-												data-bs-toggle="dropdown"
-												aria-expanded="false"
 											>
 												<Calendar className="feather-14" />
 												{currentYear}
 											</button>
-											<ul
-												className="dropdown-menu"
-												aria-labelledby="dropdown-sales"
-											>
-												<li>
-													<Link to="#" className="dropdown-item">
-														{currentYear}
-													</Link>
-												</li>
-												<li>
-													<Link to="#" className="dropdown-item">
-														{currentYear - 1}
-													</Link>
-												</li>
-												<li>
-													<Link to="#" className="dropdown-item">
-														{currentYear - 2}
-													</Link>
-												</li>
-											</ul>
 										</div>
 									</div>
 								</div>
@@ -457,244 +485,6 @@ const Dashboard = () => {
 												</span>
 											</td>
 											<td>2025-02-09</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-					<div className="card">
-						<div className="card-header">
-							<h4 className="card-title">Expired Products</h4>
-						</div>
-						<div className="card-body">
-							<div className="table-responsive dataview">
-								<table className="table dashboard-expired-products">
-									<thead>
-										<tr>
-											<th className="no-sort">
-												<label className="checkboxs">
-													<input type="checkbox" id="select-all" />
-													<span className="checkmarks" />
-												</label>
-											</th>
-											<th>Product</th>
-											<th>SKU</th>
-											<th>Manufactured Date</th>
-											<th>Expired Date</th>
-											<th className="no-sort">Action</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td>
-												<label className="checkboxs">
-													<input type="checkbox" />
-													<span className="checkmarks" />
-												</label>
-											</td>
-											<td>
-												<div className="productimgname">
-													<Link to="#" className="product-img stock-img">
-														<ImageWithBasePath
-															src="assets/img/products/expire-product-01.png"
-															alt="product"
-														/>
-													</Link>
-													<Link to="#">Red Premium Handy </Link>
-												</div>
-											</td>
-											<td>
-												<Link to="#">PT006</Link>
-											</td>
-											<td>17 Jan 2023</td>
-											<td>29 Mar 2023</td>
-											<td className="action-table-data">
-												<div className="edit-delete-action">
-													<Link className="me-2 p-2" to="#">
-														<i data-feather="edit" className="feather-edit" />
-													</Link>
-													<Link
-														className=" confirm-text p-2"
-														to="#"
-														onClick={showConfirmationAlert}
-													>
-														<i
-															data-feather="trash-2"
-															className="feather-trash-2"
-														/>
-													</Link>
-												</div>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<label className="checkboxs">
-													<input type="checkbox" />
-													<span className="checkmarks" />
-												</label>
-											</td>
-											<td>
-												<div className="productimgname">
-													<Link to="#" className="product-img stock-img">
-														<ImageWithBasePath
-															src="assets/img/products/expire-product-02.png"
-															alt="product"
-														/>
-													</Link>
-													<Link to="#">Iphone 14 Pro</Link>
-												</div>
-											</td>
-											<td>
-												<Link to="#">PT007</Link>
-											</td>
-											<td>22 Feb 2023</td>
-											<td>04 Apr 2023</td>
-											<td className="action-table-data">
-												<div className="edit-delete-action">
-													<Link className="me-2 p-2" to="#">
-														<i data-feather="edit" className="feather-edit" />
-													</Link>
-													<Link
-														className="confirm-text p-2"
-														to="#"
-														onClick={showConfirmationAlert}
-													>
-														<i
-															data-feather="trash-2"
-															className="feather-trash-2"
-														/>
-													</Link>
-												</div>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<label className="checkboxs">
-													<input type="checkbox" />
-													<span className="checkmarks" />
-												</label>
-											</td>
-											<td>
-												<div className="productimgname">
-													<Link to="#" className="product-img stock-img">
-														<ImageWithBasePath
-															src="assets/img/products/expire-product-03.png"
-															alt="product"
-														/>
-													</Link>
-													<Link to="#">Black Slim 200 </Link>
-												</div>
-											</td>
-											<td>
-												<Link to="#">PT008</Link>
-											</td>
-											<td>18 Mar 2023</td>
-											<td>13 May 2023</td>
-											<td className="action-table-data">
-												<div className="edit-delete-action">
-													<Link className="me-2 p-2" to="#">
-														<i data-feather="edit" className="feather-edit" />
-													</Link>
-													<Link
-														className=" confirm-text p-2"
-														to="#"
-														onClick={showConfirmationAlert}
-													>
-														<i
-															data-feather="trash-2"
-															className="feather-trash-2"
-														/>
-													</Link>
-												</div>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<label className="checkboxs">
-													<input type="checkbox" />
-													<span className="checkmarks" />
-												</label>
-											</td>
-											<td>
-												<div className="productimgname">
-													<Link to="#" className="product-img stock-img">
-														<ImageWithBasePath
-															src="assets/img/products/expire-product-04.png"
-															alt="product"
-														/>
-													</Link>
-													<Link to="#">Woodcraft Sandal</Link>
-												</div>
-											</td>
-											<td>
-												<Link to="#">PT009</Link>
-											</td>
-											<td>29 Mar 2023</td>
-											<td>27 May 2023</td>
-											<td className="action-table-data">
-												<div className="edit-delete-action">
-													<Link className="me-2 p-2" to="#">
-														<i data-feather="edit" className="feather-edit" />
-													</Link>
-													<Link
-														className=" confirm-text p-2"
-														to="#"
-														onClick={showConfirmationAlert}
-													>
-														<i
-															data-feather="trash-2"
-															className="feather-trash-2"
-														/>
-													</Link>
-												</div>
-											</td>
-										</tr>
-										<tr>
-											<td>
-												<label className="checkboxs">
-													<input type="checkbox" />
-													<span className="checkmarks" />
-												</label>
-											</td>
-											<td>
-												<div className="productimgname">
-													<Link to="#" className="product-img stock-img">
-														<ImageWithBasePath
-															src="assets/img/products/stock-img-03.png"
-															alt="product"
-														/>
-													</Link>
-													<Link to="#">Apple Series 5 Watch </Link>
-												</div>
-											</td>
-											<td>
-												<Link to="#">PT010</Link>
-											</td>
-											<td>24 Mar 2023</td>
-											<td>26 May 2023</td>
-											<td className="action-table-data">
-												<div className="edit-delete-action">
-													<Link
-														className="me-2 p-2"
-														to="#"
-														data-bs-toggle="modal"
-														data-bs-target="#edit-units"
-													>
-														<i data-feather="edit" className="feather-edit" />
-													</Link>
-													<Link
-														className=" confirm-text p-2"
-														to="#"
-														onClick={showConfirmationAlert}
-													>
-														<i
-															data-feather="trash-2"
-															className="feather-trash-2"
-														/>
-													</Link>
-												</div>
-											</td>
 										</tr>
 									</tbody>
 								</table>

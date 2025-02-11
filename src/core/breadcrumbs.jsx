@@ -2,10 +2,9 @@ import { Download, RotateCcw } from "feather-icons-react/build/IconComponents";
 import PropTypes from "prop-types";
 import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { ChevronUp } from "react-feather";
+import { ChevronUp, PlusCircle } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import ImageWithBasePath from "./img/imagewithbasebath";
 import { setToogleHeader } from "./redux/action";
 
 const Breadcrumbs = (props) => {
@@ -39,20 +38,6 @@ const Breadcrumbs = (props) => {
 				</div>
 				<ul className="table-top-head">
 					<li>
-						<Link data-bs-toggle="tooltip" data-bs-placement="top" title="Pdf">
-							<ImageWithBasePath src="assets/img/icons/pdf.svg" alt="img" />
-						</Link>
-					</li>
-					<li>
-						<Link
-							data-bs-toggle="tooltip"
-							data-bs-placement="top"
-							title="Excel"
-						>
-							<ImageWithBasePath src="assets/img/icons/excel.svg" alt="img" />
-						</Link>
-					</li>
-					<li>
 						<OverlayTrigger placement="top" overlay={renderRefreshTooltip}>
 							<Link data-bs-toggle="tooltip" data-bs-placement="top">
 								<RotateCcw />
@@ -60,6 +45,17 @@ const Breadcrumbs = (props) => {
 						</OverlayTrigger>
 					</li>
 				</ul>
+				<div className="page-btn">
+					<Link
+						to="#"
+						className="btn btn-added"
+						data-bs-toggle="modal"
+						data-bs-target="#add-units"
+					>
+						<PlusCircle className="me-2" />
+						{props.addButton}
+					</Link>
+				</div>
 				<div className="page-btn import">
 					<Link
 						to="#"
@@ -162,6 +158,17 @@ const Breadcrumbs = (props) => {
 						</OverlayTrigger>
 					</li>
 				</ul>
+				<div className="page-btn">
+					<Link
+						to="#"
+						className="btn btn-added"
+						data-bs-toggle="modal"
+						data-bs-target="#add-units"
+					>
+						<PlusCircle className="me-2" />
+						{props.addButton}
+					</Link>
+				</div>
 			</div>
 		);
 	}

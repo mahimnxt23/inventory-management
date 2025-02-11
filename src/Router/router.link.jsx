@@ -157,8 +157,6 @@ import Prefixes from "../feature-module/settings/websitesettings/prefixes";
 import SocialAuthentication from "../feature-module/settings/websitesettings/socialauthentication";
 import SystemSettings from "../feature-module/settings/websitesettings/systemsettings";
 import Managestock from "../feature-module/stock/managestock";
-import StockAdjustment from "../feature-module/stock/stockAdjustment";
-import StockTransfer from "../feature-module/stock/stockTransfer";
 import ClipBoard from "../feature-module/uiinterface/advancedui/clipboard";
 import Ribbon from "../feature-module/uiinterface/advancedui/ribbon";
 import FormBasicInputs from "../feature-module/uiinterface/forms/formelements/basic-inputs";
@@ -1000,20 +998,6 @@ export const publicRoutes = [
 		path: routes.managestock,
 		name: "managestock",
 		element: <Managestock />,
-		route: Route,
-	},
-	{
-		id: 88,
-		path: routes.stockadjustment,
-		name: "stockadjustment",
-		element: <StockAdjustment />,
-		route: Route,
-	},
-	{
-		id: 89,
-		path: routes.stocktransfer,
-		name: "stocktransfer",
-		element: <StockTransfer />,
 		route: Route,
 	},
 	{

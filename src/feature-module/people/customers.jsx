@@ -1,15 +1,29 @@
+import { ChevronUp, RotateCcw } from "feather-icons-react/build/IconComponents";
 import React from "react";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { Edit, Trash2 } from "react-feather";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Breadcrumbs from "../../core/breadcrumbs";
-// import CustomerModal from "../../core/modals/peoples/customerModal";
 import Table from "../../core/pagination/datatable";
+import { setToogleHeader } from "../../core/redux/action";
+// import CustomerModal from "../../core/modals/peoples/customerModal";
 
 const Customers = () => {
+	const dispatch = useDispatch();
 	const data = useSelector((state) => state.customerdata);
+
+	const renderRefreshTooltip = (props) => (
+		<Tooltip id="refresh-tooltip" {...props}>
+			Refresh
+		</Tooltip>
+	);
+	const renderCollapseTooltip = (props) => (
+		<Tooltip id="refresh-tooltip" {...props}>
+			Collapse
+		</Tooltip>
+	);
 
 	const columns = [
 		{
@@ -93,11 +107,38 @@ const Customers = () => {
 	return (
 		<div className="page-wrapper">
 			<div className="content">
-				<Breadcrumbs
-					maintitle="Customer List"
-					subtitle="Manage Your Expense Category"
-					// addButton="Add New Customer"
-				/>
+				<div className="page-header">
+					<div className="add-item d-flex">
+						<div className="page-title">
+							<h4>Customer List</h4>
+							<h6>Manage Your Expense Category</h6>
+						</div>
+					</div>
+					<ul className="table-top-head">
+						<li>
+							<OverlayTrigger placement="top" overlay={renderRefreshTooltip}>
+								<Link data-bs-toggle="tooltip" data-bs-placement="top">
+									<RotateCcw />
+								</Link>
+							</OverlayTrigger>
+						</li>
+						<li>
+							<OverlayTrigger placement="top" overlay={renderCollapseTooltip}>
+								<Link
+									data-bs-toggle="tooltip"
+									data-bs-placement="top"
+									id="collapse-header"
+									className={data ? "active" : ""}
+									onClick={() => {
+										dispatch(setToogleHeader(!data));
+									}}
+								>
+									<ChevronUp />
+								</Link>
+							</OverlayTrigger>
+						</li>
+					</ul>
+				</div>
 
 				{/* /product list */}
 				<div className="card table-list-card">
@@ -113,7 +154,6 @@ const Customers = () => {
 				</div>
 				{/* /product list */}
 			</div>
-			{/* <CustomerModal /> */}
 		</div>
 	);
 };

@@ -56,7 +56,7 @@ export const CustomerData = [
 	{
 		id: 7,
 		CustomerName: "Walk-in-Customer",
-		SerialNo: "07",
+		SerialNo: "7",
 		Customer: "Walk-in-Customer",
 		Email: "customer01@exmple.com",
 		Phone: "+19125852947",

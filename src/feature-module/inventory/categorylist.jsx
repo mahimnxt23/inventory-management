@@ -1,6 +1,11 @@
-import { ChevronUp, RotateCcw } from "feather-icons-react/build/IconComponents";
+import {
+	ChevronUp,
+	PlusCircle,
+	RotateCcw,
+} from "feather-icons-react/build/IconComponents";
 import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Edit, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -28,15 +33,15 @@ const CategoryList = () => {
 
 	const columns = [
 		{
+			title: "Serial No.",
+			dataIndex: "serialno",
+			sorter: (a, b) => a.Code.length - b.Code.length,
+		},
+		{
 			title: "Category",
 			dataIndex: "category",
 			sorter: (a, b) => a.category.length - b.category.length,
 		},
-		// {
-		// 	title: "Sub Category",
-		// 	dataIndex: "categoryslug",
-		// 	sorter: (a, b) => a.categoryslug.length - b.categoryslug.length,
-		// },
 		{
 			title: "Status",
 			dataIndex: "status",
@@ -60,14 +65,14 @@ const CategoryList = () => {
 							data-bs-toggle="modal"
 							data-bs-target="#edit-category"
 						>
-							<i data-feather="edit" className="feather-edit"></i>
+							<Edit data-feather="edit" className="feather-edit"></Edit>
 						</Link>
 						<Link className="confirm-text p-2" to="#">
-							<i
+							<Trash2
 								data-feather="trash-2"
 								className="feather-trash-2"
 								onClick={showConfirmationAlert}
-							></i>
+							></Trash2>
 						</Link>
 					</div>
 				</div>
@@ -136,6 +141,17 @@ const CategoryList = () => {
 								</OverlayTrigger>
 							</li>
 						</ul>
+						<div className="page-btn">
+							<Link
+								to="#"
+								className="btn btn-added"
+								data-bs-toggle="modal"
+								data-bs-target="#add-category"
+							>
+								<PlusCircle className="me-2" />
+								Add New Category
+							</Link>
+						</div>
 					</div>
 					{/* /product list */}
 					<div className="card table-list-card">

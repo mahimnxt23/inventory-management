@@ -5,7 +5,11 @@ import {
 } from "feather-icons-react/build/IconComponents";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { getMedicinsData } from "../../core/json/productlistdata";
 import { setToogleHeader } from "../../core/redux/action";
+import { all_routes } from "../../Router/all_routes";
+
+const route = all_routes;
 
 const renderRefreshTooltip = (props) => (
 	<Tooltip id="refresh-tooltip" {...props}>
@@ -23,7 +27,6 @@ import { Edit, Trash2 } from "react-feather";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { getMedicinsData } from "../../core/json/productlistdata";
 import Table from "../../core/pagination/datatable";
 
 const ProductList = () => {
@@ -31,7 +34,7 @@ const ProductList = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
-	const data = useSelector((state) => state.getMedicinsData);
+	const data = useSelector((state) => state.product_list);
 
 	useEffect(() => {
 		fetchMedicinData();
@@ -122,7 +125,11 @@ const ProductList = () => {
 		{ title: "Medicin Category", dataIndex: "medicine_category" },
 		{ title: "Bottle Capacity", dataIndex: "bottle_capacity" },
 		{ title: "Total Bottle", dataIndex: "total_medicine" },
-		{ title: "Created Date", dataIndex: "created_at" },
+		{
+			title: "Created Date",
+			dataIndex: "created_at",
+			render: (date) => new Date(date).toLocaleDateString(),
+		},
 		{
 			title: "Action",
 			dataIndex: "action",
@@ -150,6 +157,9 @@ const ProductList = () => {
 			),
 		},
 	];
+
+	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error: {error}</p>;
 
 	return (
 		<div className="page-wrapper">
@@ -197,7 +207,7 @@ const ProductList = () => {
 				<div className="card table-list-card">
 					<div className="card-body">
 						<div className="table-responsive">
-							<Table columns={columns} dataSource={dataSource} />
+							<Table columns={columns} dataSource={medicins} />
 						</div>
 					</div>
 				</div>

@@ -3,9 +3,15 @@ import {
 	PlusCircle,
 	RotateCcw,
 } from "feather-icons-react/build/IconComponents";
+import React, { useEffect, useState } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Edit, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { getMedicinsData } from "../../core/json/productlistdata";
+import Table from "../../core/pagination/datatable";
 import { setToogleHeader } from "../../core/redux/action";
 import { all_routes } from "../../Router/all_routes";
 
@@ -22,19 +28,12 @@ const renderCollapseTooltip = (props) => (
 	</Tooltip>
 );
 
-import React, { useEffect, useState } from "react";
-import { Edit, Trash2 } from "react-feather";
-import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import Table from "../../core/pagination/datatable";
-
 const ProductList = () => {
 	const [medicins, setMedicins] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
-	const data = useSelector((state) => state.product_list);
+	const data = useSelector((state) => state.toggle_header);
 
 	useEffect(() => {
 		fetchMedicinData();

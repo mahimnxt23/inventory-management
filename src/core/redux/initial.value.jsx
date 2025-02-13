@@ -26,7 +26,7 @@ import { shiftlistdata } from "../json/shiftlistdata";
 import { StockTransferData } from "../json/stocktransferdata";
 import { subcateorydata } from "../json/subcategorydata";
 import { SupplierData } from "../json/supplier_data";
-import { unitsdata } from "../json/unitsdata";
+import { getUnitsdata } from "../json/unitsdata";
 import { userlisadata } from "../json/users";
 import { variantattributesdata } from "../json/variantattributesdata";
 import { warrentydata } from "../json/waarrentydata";
@@ -37,7 +37,7 @@ const initialState = {
 	dashboard_expiredproduct: expiredproductdata,
 	saleshdashboard_recenttransaction: salestransaction,
 	brand_list: brandlistdata,
-	unit_data: unitsdata,
+	unit_data: getUnitsdata,
 	variantattributes_data: variantattributesdata,
 	warranty_data: warrentydata,
 	barcode_data: barcodedata,

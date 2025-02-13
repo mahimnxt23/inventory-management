@@ -1,122 +1,156 @@
 import {
 	ChevronUp,
-	Edit,
 	PlusCircle,
 	RotateCcw,
-	Trash2,
 } from "feather-icons-react/build/IconComponents";
-import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import { setToogleHeader } from "../../core/redux/action";
+
+const renderRefreshTooltip = (props) => (
+	<Tooltip id="refresh-tooltip" {...props}>
+		Refresh
+	</Tooltip>
+);
+const renderCollapseTooltip = (props) => (
+	<Tooltip id="refresh-tooltip" {...props}>
+		Collapse
+	</Tooltip>
+);
+
+import React, { useEffect, useState } from "react";
+import { Edit, Trash2 } from "react-feather";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import Brand from "../../core/modals/inventory/brand";
+import { getMedicinsData } from "../../core/json/productlistdata";
 import Table from "../../core/pagination/datatable";
-import { setToogleHeader } from "../../core/redux/action";
-import { all_routes } from "../../Router/all_routes";
 
 const ProductList = () => {
-	const dataSource = useSelector((state) => state.product_list);
+	const [medicins, setMedicins] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
-	const data = useSelector((state) => state.toggle_header);
+	const data = useSelector((state) => state.getMedicinsData);
 
-	const route = all_routes;
+	useEffect(() => {
+		fetchMedicinData();
+	}, []);
+
+	const fetchMedicinData = async () => {
+		setLoading(true);
+		try {
+			const medicinsList = await getMedicinsData();
+			setMedicins(medicinsList);
+		} catch (err) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const deleteMedicin = async (id) => {
+		try {
+			const response = await fetch(`/api/medicins/${id}`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to delete medicin");
+			}
+
+			return true;
+		} catch (error) {
+			console.error("Error deleting medicin:", error);
+			throw error;
+		}
+	};
+
+	const MySwal = withReactContent(Swal);
+
+	const showConfirmationAlert = (id) => {
+		MySwal.fire({
+			title: "Are you sure?",
+			text: "This action cannot be undone!",
+			showCancelButton: true,
+			confirmButtonColor: "#00ff00",
+			confirmButtonText: "Yes, delete it!",
+			cancelButtonColor: "#ff0000",
+			cancelButtonText: "Cancel",
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				await handleDelete(id);
+			}
+		});
+	};
+
+	const handleDelete = async (id) => {
+		try {
+			await deleteMedicin(id);
+			setMedicins(medicins.filter((medicin) => medicin.id !== id));
+
+			MySwal.fire({
+				title: "Deleted!",
+				text: "Medicin has been removed.",
+				icon: "success",
+				confirmButtonText: "OK",
+			});
+		} catch (error) {
+			MySwal.fire("Error", "Could not delete medicin!", "error");
+		}
+	};
 
 	const columns = [
 		{
-			title: "Medicine Name",
-			dataIndex: "medicinename",
-			sorter: (a, b) => a.medicinename.length - b.medicinename.length,
+			title: "Serial No.",
+			dataIndex: "SerialNo",
+			render: (_, __, index) => index + 1,
 		},
 		{
-			title: "Medicine Type",
-			dataIndex: "medicinetype",
-			sorter: (a, b) => a.medicinetype.length - b.medicinetype.length,
+			title: "Medicin Name",
+			dataIndex: "medicine_name",
+			render: (text, record) => (
+				<span className="productimgname">
+					<Link to="" className="product-img stock-img">
+						<img alt="" src={record.medicine_picture} />
+					</Link>
+					<Link to="">{text}</Link>
+				</span>
+			),
 		},
-
-		{
-			title: "Medicine Category",
-			dataIndex: "medicinecategory",
-			sorter: (a, b) => a.medicinecategory.length - b.medicinecategory.length,
-		},
-
-		{
-			title: "Bottle Capacity",
-			dataIndex: "bottlecapacity",
-			sorter: (a, b) => a.bottlecapacity.length - b.bottlecapacity.length,
-		},
-		{
-			title: "Total Bottle",
-			dataIndex: "totalbottle",
-			sorter: (a, b) => a.totalbottle.length - b.totalbottle.length,
-		},
-		{
-			title: "Created Date",
-			dataIndex: "createdate",
-			sorter: (a, b) => a.createdate.length - b.createdate.length,
-		},
+		{ title: "Medicin Type", dataIndex: "medicine_type" },
+		{ title: "Medicin Category", dataIndex: "medicine_category" },
+		{ title: "Bottle Capacity", dataIndex: "bottle_capacity" },
+		{ title: "Total Bottle", dataIndex: "total_medicine" },
+		{ title: "Created Date", dataIndex: "created_at" },
 		{
 			title: "Action",
 			dataIndex: "action",
-			render: () => (
+			render: (_, record) => (
 				<div className="action-table-data">
 					<div className="edit-delete-action">
-						<div className="input-block add-lists"></div>
-						<Link className="me-2 p-2" to={route.editproduct}>
+						<Link
+							className="me-2 p-2"
+							to="#"
+							data-bs-toggle="modal"
+							data-bs-target="#edit-units"
+						>
 							<Edit className="feather-edit" />
 						</Link>
+
 						<Link
 							className="confirm-text p-2"
 							to="#"
-							onClick={showConfirmationAlert}
+							onClick={() => showConfirmationAlert(record.id)}
 						>
 							<Trash2 className="feather-trash-2" />
 						</Link>
 					</div>
 				</div>
 			),
-			sorter: (a, b) => a.createdby.length - b.createdby.length,
 		},
 	];
-	const MySwal = withReactContent(Swal);
 
-	const showConfirmationAlert = () => {
-		MySwal.fire({
-			title: "Are you sure?",
-			text: "You won't be able to revert this!",
-			showCancelButton: true,
-			confirmButtonColor: "#00ff00",
-			confirmButtonText: "Yes, delete it!",
-			cancelButtonColor: "#ff0000",
-			cancelButtonText: "Cancel",
-		}).then((result) => {
-			if (result.isConfirmed) {
-				MySwal.fire({
-					title: "Deleted!",
-					text: "Your file has been deleted.",
-					className: "btn btn-success",
-					confirmButtonText: "OK",
-					customClass: {
-						confirmButton: "btn btn-success",
-					},
-				});
-			} else {
-				MySwal.close();
-			}
-		});
-	};
-
-	const renderRefreshTooltip = (props) => (
-		<Tooltip id="refresh-tooltip" {...props}>
-			Refresh
-		</Tooltip>
-	);
-	const renderCollapseTooltip = (props) => (
-		<Tooltip id="refresh-tooltip" {...props}>
-			Collapse
-		</Tooltip>
-	);
 	return (
 		<div className="page-wrapper">
 			<div className="content">
@@ -168,7 +202,6 @@ const ProductList = () => {
 					</div>
 				</div>
 				{/* /product list */}
-				<Brand />
 			</div>
 		</div>
 	);

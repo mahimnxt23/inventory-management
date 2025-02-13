@@ -5,16 +5,16 @@ import {
 	RotateCcw,
 	Trash2,
 } from "feather-icons-react/build/IconComponents";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { ChevronUp } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import ImageWithBasePath from "../../core/img/imagewithbasebath";
 import { setToogleHeader } from "../../core/redux/action";
 import { all_routes } from "../../Router/all_routes";
+import { getData } from "../../utils/api";
 
 const EmployeesGrid = () => {
 	const route = all_routes;
@@ -58,6 +58,29 @@ const EmployeesGrid = () => {
 			}
 		});
 	};
+
+	const [employees, setEmployees] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	useEffect(() => {
+		fetchEmployeeData();
+	}, []);
+
+	const fetchEmployeeData = async () => {
+		setLoading(true);
+		try {
+			const [empList] = await Promise.all([getData("/employees")]);
+
+			// Store employee list
+			setEmployees(empList);
+		} catch (err) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<div>
 			<div className="page-wrapper">
@@ -104,478 +127,84 @@ const EmployeesGrid = () => {
 					{/* /product list */}
 					<div className="employee-grid-widget">
 						<div className="row">
-							<div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
-								<div className="employee-grid-profile">
-									<div className="profile-head">
-										<div>
-											<span className="badge badge-linesuccess text-center w-auto me-1">
-												Active
-											</span>
-										</div>
-										<div className="profile-head-action">
-											<div className="dropdown profile-action">
-												<Link
-													to="#"
-													className="action-icon dropdown-toggle"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<MoreVertical />
-												</Link>
-												<ul className="dropdown-menu">
-													<li>
-														<Link
-															to={route.editemployee}
-															className="dropdown-item"
-														>
-															<Edit className="info-img" />
-															Edit
-														</Link>
-													</li>
-													<li>
+							{loading ? (
+								<p>Loading...</p>
+							) : error ? (
+								<p>Error: {error}</p>
+							) : employees.length > 0 ? (
+								employees.map((employee) => (
+									<div
+										key={employee.id}
+										className="col-xxl-3 col-xl-4 col-lg-6 col-md-6"
+									>
+										<div className="employee-grid-profile">
+											<div className="profile-head">
+												<div>
+													<span className="badge badge-linesuccess text-center w-auto me-1">
+														Active
+													</span>
+												</div>
+												<div className="profile-head-action">
+													<div className="dropdown profile-action">
 														<Link
 															to="#"
-															className="dropdown-item confirm-text mb-0"
-															onClick={showConfirmationAlert}
+															className="action-icon dropdown-toggle"
+															data-bs-toggle="dropdown"
+															aria-expanded="false"
 														>
-															<Trash2 className="info-img" />
-															Delete
+															<MoreVertical />
 														</Link>
-													</li>
-												</ul>
+														<ul className="dropdown-menu">
+															<li>
+																<Link
+																	to={route.editemployee}
+																	className="dropdown-item"
+																>
+																	<Edit className="info-img" />
+																	Edit
+																</Link>
+															</li>
+															<li>
+																<Link
+																	to="#"
+																	className="dropdown-item confirm-text mb-0"
+																	onClick={showConfirmationAlert}
+																>
+																	<Trash2 className="info-img" />
+																	Delete
+																</Link>
+															</li>
+														</ul>
+													</div>
+												</div>
 											</div>
-										</div>
-									</div>
-									<div className="profile-info">
-										<div className="profile-pic active-profile">
-											<ImageWithBasePath
-												src="assets/img/users/user-01.jpg"
-												alt=""
-											/>
-										</div>
-										<h5>EMP ID : POS001</h5>
-										<h4>Mitchum Daniel</h4>
-										<span>Designer</span>
-										<span className="employeeContact">+00 00000-000000</span>
-									</div>
-									<ul className="department">
-										<li>Joined: 23 Jul 2023</li>
-									</ul>
-								</div>
-							</div>
-							<div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
-								<div className="employee-grid-profile">
-									<div className="profile-head">
-										<div>
-											<span className="badge badge-linesuccess text-center w-auto me-1">
-												Active
-											</span>
-										</div>
-										<div className="profile-head-action">
-											<div className="dropdown profile-action">
-												<Link
-													to="#"
-													className="action-icon dropdown-toggle"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<MoreVertical />{" "}
-												</Link>
-												<ul className="dropdown-menu">
-													<li>
-														<Link
-															to={route.editemployee}
-															className="dropdown-item"
-														>
-															<Edit className="info-img" />
-															Edit
-														</Link>
-													</li>
-													<li>
-														<Link
-															to="#"
-															className="dropdown-item confirm-text mb-0"
-															onClick={showConfirmationAlert}
-														>
-															<Trash2 className="info-img" />
-															Delete
-														</Link>
-													</li>
-												</ul>
+											<div className="profile-info">
+												<div className="profile-pic active-profile overflow-hidden">
+													<img
+														src={employee.employee_picture}
+														alt={employee.employee_name}
+														className="img-fluid employee-img"
+													/>
+												</div>
+												<h5>EMP ID : {employee.employee_id}</h5>
+												<h4>{employee.employee_name}</h4>
+												<span className="employeeContact">
+													{employee.employee_contact}
+												</span>
+												<p>{employee.employee_address}</p>
 											</div>
+											<ul className="department">
+												<li>
+													Joined:{" "}
+													{new Date(employee.created_at).toLocaleDateString()}
+												</li>
+											</ul>
 										</div>
 									</div>
-									<div className="profile-info">
-										<div className="profile-pic active-profile">
-											<ImageWithBasePath
-												src="assets/img/users/user-02.jpg"
-												alt=""
-											/>
-										</div>
-										<h5>EMP ID : POS002</h5>
-										<h4>Susan Lopez</h4>
-										<span>Curator</span>
-										<span className="employeeContact">+00 00000-000000</span>
-									</div>
-									<ul className="department">
-										<li>Joined: 30 May 2023</li>
-									</ul>
-								</div>
-							</div>
-							<div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
-								<div className="employee-grid-profile">
-									<div className="profile-head">
-										<div>
-											<span className="badge badge-linedanger text-center w-auto me-1">
-												Inactive
-											</span>
-										</div>
-										<div className="profile-head-action">
-											<div className="dropdown profile-action">
-												<Link
-													to="#"
-													className="action-icon dropdown-toggle"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<MoreVertical />{" "}
-												</Link>
-												<ul className="dropdown-menu">
-													<li>
-														<Link
-															to={route.editemployee}
-															className="dropdown-item"
-														>
-															<Edit className="info-img" />
-															Edit
-														</Link>
-													</li>
-													<li>
-														<Link
-															to="#"
-															className="dropdown-item confirm-text mb-0"
-															onClick={showConfirmationAlert}
-														>
-															<Trash2 className="info-img" />
-															Delete
-														</Link>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-									<div className="profile-info">
-										<div className="profile-pic">
-											<ImageWithBasePath
-												src="assets/img/users/user-03.jpg"
-												alt=""
-											/>
-										</div>
-										<h5>EMP ID : POS003</h5>
-										<h4>Robert Grossman</h4>
-										<span>System Administrator</span>
-										<span className="employeeContact">+00 00000-000000</span>
-									</div>
-									<ul className="department">
-										<li>Joined: 14 Aug 2023</li>
-									</ul>
-								</div>
-							</div>
-							<div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
-								<div className="employee-grid-profile">
-									<div className="profile-head">
-										<div>
-											<span className="badge badge-linesuccess text-center w-auto me-1">
-												Active
-											</span>
-										</div>
-										<div className="profile-head-action">
-											<div className="dropdown profile-action">
-												<Link
-													to="#"
-													className="action-icon dropdown-toggle"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<MoreVertical />
-												</Link>
-												<ul className="dropdown-menu">
-													<li>
-														<Link
-															to={route.editemployee}
-															className="dropdown-item"
-														>
-															<Edit className="info-img" />
-															Edit
-														</Link>
-													</li>
-													<li>
-														<Link
-															to="#"
-															className="dropdown-item confirm-text mb-0"
-															onClick={showConfirmationAlert}
-														>
-															<Trash2 className="info-img" />
-															Delete
-														</Link>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-									<div className="profile-info">
-										<div className="profile-pic active-profile">
-											<ImageWithBasePath
-												src="assets/img/users/user-06.jpg"
-												alt=""
-											/>
-										</div>
-										<h5>EMP ID : POS004</h5>
-										<h4>Janet Hembre</h4>
-										<span>Administrative Officer</span>
-										<span className="employeeContact">+00 00000-000000</span>
-									</div>
-									<ul className="department">
-										<li>Joined: 17 Jun 2023</li>
-									</ul>
-								</div>
-							</div>
-							<div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
-								<div className="employee-grid-profile">
-									<div className="profile-head">
-										<div>
-											<span className="badge badge-linesuccess text-center w-auto me-1">
-												Active
-											</span>
-										</div>
-										<div className="profile-head-action">
-											<div className="dropdown profile-action">
-												<Link
-													to="#"
-													className="action-icon dropdown-toggle"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<MoreVertical />
-												</Link>
-												<ul className="dropdown-menu">
-													<li>
-														<Link
-															to={route.editemployee}
-															className="dropdown-item"
-														>
-															<Edit className="info-img" />
-															Edit
-														</Link>
-													</li>
-													<li>
-														<Link
-															to="#"
-															className="dropdown-item confirm-text mb-0"
-															onClick={showConfirmationAlert}
-														>
-															<Trash2 className="info-img" />
-															Delete
-														</Link>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-									<div className="profile-info">
-										<div className="profile-pic active-profile">
-											<ImageWithBasePath
-												src="assets/img/users/user-04.jpg"
-												alt=""
-											/>
-										</div>
-										<h5>EMP ID : POS005</h5>
-										<h4>Russell Belle</h4>
-										<span>Technician</span>
-										<span className="employeeContact">+00 00000-000000</span>
-									</div>
-									<ul className="department">
-										<li>Joined: 16 Jan 2014</li>
-									</ul>
-								</div>
-							</div>
-							<div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
-								<div className="employee-grid-profile">
-									<div className="profile-head">
-										<div>
-											<span className="badge badge-linedanger text-center w-auto me-1">
-												Inactive
-											</span>
-										</div>
-										<div className="profile-head-action">
-											<div className="dropdown profile-action">
-												<Link
-													to="#"
-													className="action-icon dropdown-toggle"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<MoreVertical />
-												</Link>
-												<ul className="dropdown-menu">
-													<li>
-														<Link
-															to={route.editemployee}
-															className="dropdown-item"
-														>
-															<Edit className="info-img" />
-															Edit
-														</Link>
-													</li>
-													<li>
-														<Link
-															to="#"
-															className="dropdown-item confirm-text mb-0"
-															onClick={showConfirmationAlert}
-														>
-															<Trash2 className="info-img" />
-															Delete
-														</Link>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-									<div className="profile-info">
-										<div className="profile-pic">
-											<ImageWithBasePath
-												src="assets/img/users/user-05.jpg"
-												alt=""
-											/>
-										</div>
-										<h5>EMP ID : POS006</h5>
-										<h4>Edward K. Muniz</h4>
-										<span>Office Support Secretary</span>
-										<span className="employeeContact">+00 00000-000000</span>
-									</div>
-									<ul className="department">
-										<li>Joined: 07 Feb 2017</li>
-									</ul>
-								</div>
-							</div>
-							<div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
-								<div className="employee-grid-profile">
-									<div className="profile-head">
-										<div>
-											<span className="badge badge-linesuccess text-center w-auto me-1">
-												Active
-											</span>
-										</div>
-										<div className="profile-head-action">
-											<div className="dropdown profile-action">
-												<Link
-													to="#"
-													className="action-icon dropdown-toggle"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<MoreVertical />
-												</Link>
-												<ul className="dropdown-menu">
-													<li>
-														<Link
-															to={route.editemployee}
-															className="dropdown-item"
-														>
-															<Edit className="info-img" />
-															Edit
-														</Link>
-													</li>
-													<li>
-														<Link
-															to="#"
-															className="dropdown-item confirm-text mb-0"
-															onClick={showConfirmationAlert}
-														>
-															<Trash2 className="info-img" />
-															Delete
-														</Link>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-									<div className="profile-info">
-										<div className="profile-pic active-profile">
-											<ImageWithBasePath
-												src="assets/img/users/user-07.jpg"
-												alt=""
-											/>
-										</div>
-										<h5>EMP ID : POS007</h5>
-										<h4>Susan Moore</h4>
-										<span>Tech Lead</span>
-										<span className="employeeContact">+00 00000-000000</span>
-									</div>
-									<ul className="department">
-										<li>Joined: 14 Mar 2023</li>
-									</ul>
-								</div>
-							</div>
-							<div className="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
-								<div className="employee-grid-profile">
-									<div className="profile-head">
-										<div>
-											<span className="badge badge-linesuccess text-center w-auto me-1">
-												Active
-											</span>
-										</div>
-										<div className="profile-head-action">
-											<div className="dropdown profile-action">
-												<Link
-													to="#"
-													className="action-icon dropdown-toggle"
-													data-bs-toggle="dropdown"
-													aria-expanded="false"
-												>
-													<MoreVertical />
-												</Link>
-												<ul className="dropdown-menu">
-													<li>
-														<Link
-															to={route.editemployee}
-															className="dropdown-item"
-														>
-															<Edit className="info-img" />
-															Edit
-														</Link>
-													</li>
-													<li>
-														<Link
-															to="#"
-															className="dropdown-item confirm-text mb-0"
-															onClick={showConfirmationAlert}
-														>
-															<Trash2 className="info-img" />
-															Delete
-														</Link>
-													</li>
-												</ul>
-											</div>
-										</div>
-									</div>
-									<div className="profile-info">
-										<div className="profile-pic active-profile">
-											<ImageWithBasePath
-												src="assets/img/users/user-08.jpg"
-												alt=""
-											/>
-										</div>
-										<h5>EMP ID : POS008</h5>
-										<h4>Lance Jackson</h4>
-										<span>Database administrator</span>
-										<span className="employeeContact">+00 00000-000000</span>
-									</div>
-									<ul className="department">
-										<li>Joined: 23 July 2023</li>
-									</ul>
-								</div>
-							</div>
+								))
+							) : (
+								<p>No employees found.</p>
+							)}
 						</div>
 					</div>
 				</div>

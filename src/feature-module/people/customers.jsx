@@ -1,59 +1,117 @@
 import { ChevronUp, RotateCcw } from "feather-icons-react/build/IconComponents";
-import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { Edit, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
+import { setToogleHeader } from "../../core/redux/action";
+
+const renderRefreshTooltip = (props) => (
+	<Tooltip id="refresh-tooltip" {...props}>
+		Refresh
+	</Tooltip>
+);
+const renderCollapseTooltip = (props) => (
+	<Tooltip id="refresh-tooltip" {...props}>
+		Collapse
+	</Tooltip>
+);
+
+import React, { useEffect, useState } from "react";
+import { Edit, Trash2 } from "react-feather";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { getCustomerData } from "../../core/json/customer_data";
 import Table from "../../core/pagination/datatable";
-import { setToogleHeader } from "../../core/redux/action";
-// import CustomerModal from "../../core/modals/peoples/customerModal";
 
 const Customers = () => {
+	const [customers, setCustomers] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
 	const data = useSelector((state) => state.customerdata);
 
-	const renderRefreshTooltip = (props) => (
-		<Tooltip id="refresh-tooltip" {...props}>
-			Refresh
-		</Tooltip>
-	);
-	const renderCollapseTooltip = (props) => (
-		<Tooltip id="refresh-tooltip" {...props}>
-			Collapse
-		</Tooltip>
-	);
+	useEffect(() => {
+		fetchCustomerData();
+	}, []);
+
+	const fetchCustomerData = async () => {
+		setLoading(true);
+		try {
+			const customerList = await getCustomerData();
+			setCustomers(customerList);
+		} catch (err) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const deleteCustomer = async (id) => {
+		try {
+			const response = await fetch(`/api/customers/${id}`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to delete customer");
+			}
+
+			return true;
+		} catch (error) {
+			console.error("Error deleting customer:", error);
+			throw error;
+		}
+	};
+
+	const MySwal = withReactContent(Swal);
+
+	const showConfirmationAlert = (id) => {
+		MySwal.fire({
+			title: "Are you sure?",
+			text: "This action cannot be undone!",
+			showCancelButton: true,
+			confirmButtonColor: "#00ff00",
+			confirmButtonText: "Yes, delete it!",
+			cancelButtonColor: "#ff0000",
+			cancelButtonText: "Cancel",
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				await handleDelete(id);
+			}
+		});
+	};
+
+	const handleDelete = async (id) => {
+		try {
+			await deleteCustomer(id);
+			setCustomers(customers.filter((customer) => customer.id !== id));
+
+			MySwal.fire({
+				title: "Deleted!",
+				text: "Customer has been removed.",
+				icon: "success",
+				confirmButtonText: "OK",
+			});
+		} catch (error) {
+			MySwal.fire("Error", "Could not delete customer!", "error");
+		}
+	};
 
 	const columns = [
 		{
 			title: "Serial No.",
 			dataIndex: "SerialNo",
-			sorter: (a, b) => a.Code.length - b.Code.length,
+			render: (_, __, index) => index + 1,
 		},
-		{
-			title: "Customer Name",
-			dataIndex: "CustomerName",
-			sorter: (a, b) => a.CustomerName.length - b.CustomerName.length,
-		},
-		{
-			title: "Email",
-			dataIndex: "Email",
-			sorter: (a, b) => a.Email.length - b.Email.length,
-		},
-		{
-			title: "Phone",
-			dataIndex: "Phone",
-			sorter: (a, b) => a.Phone.length - b.Phone.length,
-		},
+		{ title: "Customer Name", dataIndex: "customer_name" },
+		{ title: "Email", dataIndex: "customer_email" },
+		{ title: "Phone", dataIndex: "customer_phone" },
+		{ title: "Address", dataIndex: "customer_address" },
 		{
 			title: "Action",
 			dataIndex: "action",
-			render: () => (
+			render: (_, record) => (
 				<div className="action-table-data">
 					<div className="edit-delete-action">
-						<div className="input-block add-lists"></div>
-
 						<Link
 							className="me-2 p-2"
 							to="#"
@@ -66,44 +124,19 @@ const Customers = () => {
 						<Link
 							className="confirm-text p-2"
 							to="#"
-							onClick={showConfirmationAlert}
+							onClick={() => showConfirmationAlert(record.id)}
 						>
 							<Trash2 className="feather-trash-2" />
 						</Link>
 					</div>
 				</div>
 			),
-			sorter: (a, b) => a.createdby.length - b.createdby.length,
 		},
 	];
 
-	const MySwal = withReactContent(Swal);
+	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error: {error}</p>;
 
-	const showConfirmationAlert = () => {
-		MySwal.fire({
-			title: "Are you sure?",
-			text: "You won't be able to revert this!",
-			showCancelButton: true,
-			confirmButtonColor: "#00ff00",
-			confirmButtonText: "Yes, delete it!",
-			cancelButtonColor: "#ff0000",
-			cancelButtonText: "Cancel",
-		}).then((result) => {
-			if (result.isConfirmed) {
-				MySwal.fire({
-					title: "Deleted!",
-					text: "Your file has been deleted.",
-					className: "btn btn-success",
-					confirmButtonText: "OK",
-					customClass: {
-						confirmButton: "btn btn-success",
-					},
-				});
-			} else {
-				MySwal.close();
-			}
-		});
-	};
 	return (
 		<div className="page-wrapper">
 			<div className="content">
@@ -147,7 +180,7 @@ const Customers = () => {
 							<Table
 								className="table datanew"
 								columns={columns}
-								dataSource={data}
+								dataSource={customers}
 							/>
 						</div>
 					</div>

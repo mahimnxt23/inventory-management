@@ -127,7 +127,7 @@ export const Units = () => {
 		{
 			title: "Reason",
 			dataIndex: "reason",
-			sorter: (a, b) => a.reason.length - b.reason.length,
+			// sorter: (a, b) => a.reason.length - b.reason.length,
 		},
 		{
 			title: "Date",

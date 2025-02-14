@@ -1,11 +1,12 @@
 import { ChevronUp, RotateCcw } from "feather-icons-react/build/IconComponents";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Edit, Trash2 } from "react-feather";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { purchaseslist } from "../../core/json/purchaselistdata";
+import { getPurchaseslist } from "../../core/json/purchaselistdata";
 import AddPurchases from "../../core/modals/purchases/addpurchases";
 import EditPurchases from "../../core/modals/purchases/editpurchases";
 import Table from "../../core/pagination/datatable";
@@ -14,25 +15,40 @@ import { setToogleHeader } from "../../core/redux/action";
 const PurchasesList = () => {
 	const columns = [
 		{
-			title: "SupplierName",
-			dataIndex: "supplierName",
-			sorter: (a, b) => a.supplierName.length - b.supplierName.length,
+			title: "ID",
+			dataIndex: "id",
+			render: (_, __, index) => index + 1,
 		},
 		{
-			title: "Reference",
-			dataIndex: "reference",
-			sorter: (a, b) => a.reference.length - b.reference.length,
+			title: "Customer ID",
+			dataIndex: "customer_user",
 		},
-
 		{
-			title: "Date",
-			dataIndex: "date",
-			sorter: (a, b) => a.date.length - b.date.length,
+			title: "Order No.",
+			dataIndex: "order_no",
 		},
-
 		{
-			title: "Status",
-			dataIndex: "status",
+			title: "Order Items",
+			dataIndex: "order_items",
+			render: (items) => (
+				<>
+					{items.map((item, index) => (
+						<p key={index}>
+							Med ID: {item.medicine} x
+							<strong>({item.medicine_quantity})</strong>
+						</p>
+					))}
+				</>
+			),
+		},
+		{
+			title: "Order Date",
+			dataIndex: "order_date",
+			render: (date) => new Date(date).toLocaleDateString(),
+		},
+		{
+			title: "Order Status",
+			dataIndex: "order_status",
 			render: (text) => (
 				<span
 					className={`badges ${
@@ -42,69 +58,46 @@ const PurchasesList = () => {
 					{text}
 				</span>
 			),
-			sorter: (a, b) => a.status.length - b.status.length,
 		},
 		{
-			title: "GrandTotal",
-			dataIndex: "grandTotal",
-			sorter: (a, b) => a.grandTotal.length - b.grandTotal.length,
+			title: "Paid Amount",
+			dataIndex: "total_amount",
 		},
 		{
-			title: "Paid",
-			dataIndex: "paid",
-			sorter: (a, b) => a.paid.length - b.paid.length,
+			title: "Tax",
+			dataIndex: "tax",
 		},
 		{
-			title: "Due",
-			dataIndex: "due",
-			sorter: (a, b) => a.due.length - b.due.length,
+			title: "Discount",
+			dataIndex: "discount",
 		},
 		{
-			title: "CreatedBy",
-			dataIndex: "createdBy",
-			render: (text) => (
-				<span
-					className={`badges ${
-						text === "Paid" ? "badge-linesuccess" : "badge-linedangered"
-					}`}
-				>
-					{text}
-				</span>
-			),
-			sorter: (a, b) => a.createdBy.length - b.createdBy.length,
-		},
-
-		{
-			title: "Actions",
-			dataIndex: "actions",
-			key: "actions",
-			render: () => (
+			title: "Action",
+			dataIndex: "action",
+			render: (_, record) => (
 				<div className="action-table-data">
 					<div className="edit-delete-action">
-						<Link className="me-2 p-2" to="#">
-							<i data-feather="eye" className="feather-eye"></i>
-						</Link>
 						<Link
 							className="me-2 p-2"
+							to="#"
 							data-bs-toggle="modal"
 							data-bs-target="#edit-units"
 						>
-							<i data-feather="edit" className="feather-edit"></i>
+							<Edit className="feather-edit" />
 						</Link>
+
 						<Link
 							className="confirm-text p-2"
 							to="#"
-							onClick={showConfirmationAlert}
+							onClick={() => showConfirmationAlert(record.id)}
 						>
-							<i data-feather="trash-2" className="feather-trash-2"></i>
+							<Trash2 className="feather-trash-2" />
 						</Link>
 					</div>
 				</div>
 			),
 		},
 	];
-	const dispatch = useDispatch();
-	const data = useSelector((state) => state.toggle_header);
 
 	const renderRefreshTooltip = (props) => (
 		<Tooltip id="refresh-tooltip" {...props}>
@@ -116,33 +109,82 @@ const PurchasesList = () => {
 			Collapse
 		</Tooltip>
 	);
+
 	const MySwal = withReactContent(Swal);
 
-	const showConfirmationAlert = () => {
+	const showConfirmationAlert = (id) => {
 		MySwal.fire({
 			title: "Are you sure?",
-			text: "You won't be able to revert this!",
+			text: "This action cannot be undone!",
 			showCancelButton: true,
 			confirmButtonColor: "#00ff00",
 			confirmButtonText: "Yes, delete it!",
 			cancelButtonColor: "#ff0000",
 			cancelButtonText: "Cancel",
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				MySwal.fire({
-					title: "Deleted!",
-					text: "Your file has been deleted.",
-					className: "btn btn-success",
-					confirmButtonText: "OK",
-					customClass: {
-						confirmButton: "btn btn-success",
-					},
-				});
-			} else {
-				MySwal.close();
+				await handleDelete(id);
 			}
 		});
 	};
+
+	const handleDelete = async (id) => {
+		try {
+			await deleteOrder(id);
+			setOrders(orders.filter((order) => order.id !== id));
+
+			MySwal.fire({
+				title: "Deleted!",
+				text: "Order has been removed.",
+				icon: "success",
+				confirmButtonText: "OK",
+			});
+		} catch (error) {
+			MySwal.fire("Error", "Could not delete order!", "error");
+		}
+	};
+
+	const [orders, setOrders] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+	const dispatch = useDispatch();
+	const data = useSelector((state) => state.toggle_header);
+
+	useEffect(() => {
+		fetchOrderData();
+	}, []);
+
+	const fetchOrderData = async () => {
+		setLoading(true);
+		try {
+			const ordersList = await getPurchaseslist();
+			setOrders(ordersList);
+		} catch (err) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const deleteOrder = async (id) => {
+		try {
+			const response = await fetch(`/api/orders/${id}`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to delete order");
+			}
+
+			return true;
+		} catch (error) {
+			console.error("Error deleting order:", error);
+			throw error;
+		}
+	};
+
+	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error: {error}</p>;
 
 	return (
 		<div>
@@ -184,7 +226,7 @@ const PurchasesList = () => {
 					<div className="card table-list-card">
 						<div className="card-body">
 							<div className="table-responsive product-list">
-								<Table columns={columns} dataSource={purchaseslist} />
+								<Table columns={columns} dataSource={orders} />
 							</div>
 						</div>
 					</div>

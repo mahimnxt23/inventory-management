@@ -40,12 +40,6 @@ export const SidebarData = [
 		submenuHdr: "Inventory",
 		submenuItems: [
 			{
-				// label: "Category",
-				label: "Medicine Categories",
-				link: "/category-list",
-				icon: <Icon.Codepen />,
-			},
-			{
 				// label: "Products",
 				label: "Medicines",
 				link: "/product-list",

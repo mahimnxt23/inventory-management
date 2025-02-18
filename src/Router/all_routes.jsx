@@ -189,7 +189,7 @@ export const all_routes = {
 	deleteaccount: "/delete-account",
 	employeegrid: "/employees-grid",
 	addemployee: "/add-employee",
-	editemployee: "/edit-employee",
+	editemployee: "/edit-employee/:id",
 	leavesadmin: "leaves-admin",
 	leavesemployee: "/leaves-employee",
 	leavestype: "/leave-types",

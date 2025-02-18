@@ -173,7 +173,7 @@ export const Units = () => {
 					<div className="page-header">
 						<div className="add-item d-flex">
 							<div className="page-title">
-								<h4>Broken Bootle Units</h4>
+								<h4>Broken Bottle Units</h4>
 								<h6>Manage your broken units</h6>
 							</div>
 						</div>

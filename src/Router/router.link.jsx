@@ -2,11 +2,7 @@ import React from "react";
 import { Navigate, Route } from "react-router-dom";
 import Dashboard from "../feature-module/dashboard/Dashboard";
 import AddProduct from "../feature-module/inventory/addproduct";
-import BrandList from "../feature-module/inventory/brandlist";
-import PrintBarcode from "../feature-module/inventory/printbarcode";
 import ProductList from "../feature-module/inventory/productlist";
-import VariantAttributes from "../feature-module/inventory/variantattributes";
-import Warranty from "../feature-module/inventory/warranty";
 import Grid from "../feature-module/uiinterface/grid";
 import Images from "../feature-module/uiinterface/images";
 import Lightboxes from "../feature-module/uiinterface/lightbox";
@@ -61,31 +57,14 @@ import Video from "../feature-module/uiinterface/video";
 
 const routes = all_routes;
 
-import StoreList from "../core/modals/peoples/storelist";
-import WareHouses from "../core/modals/peoples/warehouses";
 import Email from "../feature-module/Application/email";
 import AddEmployee from "../feature-module/hrm/addemployee";
-import AttendanceEmployee from "../feature-module/hrm/attendance-employee";
-import AttendanceAdmin from "../feature-module/hrm/attendanceadmin";
-import DepartmentGrid from "../feature-module/hrm/departmentgrid";
-import DepartmentList from "../feature-module/hrm/departmentlist";
-import Designation from "../feature-module/hrm/designation";
 import EditEmployee from "../feature-module/hrm/editemployee";
 import EmployeesGrid from "../feature-module/hrm/employeesgrid";
-import Holidays from "../feature-module/hrm/holidays";
-import LeavesAdmin from "../feature-module/hrm/leavesadmin";
-import LeavesEmployee from "../feature-module/hrm/leavesemployee";
-import LeaveTypes from "../feature-module/hrm/leavetypes";
-import PayrollList from "../feature-module/hrm/payroll-list";
-import Payslip from "../feature-module/hrm/payslip";
-import Shift from "../feature-module/hrm/shift";
-import CategoryList from "../feature-module/inventory/categorylist";
 import EditProduct from "../feature-module/inventory/editproduct";
 import ExpiredProduct from "../feature-module/inventory/expiredproduct";
 import LowStock from "../feature-module/inventory/lowstock";
 import ProductDetail from "../feature-module/inventory/productdetail";
-import QRcode from "../feature-module/inventory/qrcode";
-import SubCategories from "../feature-module/inventory/subcategories";
 import { Units } from "../feature-module/inventory/units";
 import Blankpage from "../feature-module/pages/blankpage";
 import Comingsoon from "../feature-module/pages/comingsoon";
@@ -114,8 +93,6 @@ import PurchaseReturns from "../feature-module/purchases/purchasereturns";
 import PurchasesList from "../feature-module/purchases/purchaseslist";
 import SalesReport from "../feature-module/Reports/salesreport";
 import InvoiceReport from "../feature-module/sales/invoicereport";
-import Pos from "../feature-module/sales/pos";
-import QuotationList from "../feature-module/sales/quotationlist";
 import SalesList from "../feature-module/sales/saleslist";
 import SalesReturn from "../feature-module/sales/salesreturn";
 import InvoiceSettings from "../feature-module/settings/appsetting/invoicesettings";
@@ -199,38 +176,10 @@ export const publicRoutes = [
 		route: Route,
 	},
 	{
-		id: 5,
-		path: routes.brandlist,
-		name: "brant",
-		element: <BrandList />,
-		route: Route,
-	},
-	{
 		id: 6,
 		path: routes.units,
 		name: "unit",
 		element: <Units />,
-		route: Route,
-	},
-	{
-		id: 7,
-		path: routes.variantyattributes,
-		name: "variantyattributes",
-		element: <VariantAttributes />,
-		route: Route,
-	},
-	{
-		id: 8,
-		path: routes.warranty,
-		name: "warranty",
-		element: <Warranty />,
-		route: Route,
-	},
-	{
-		id: 9,
-		path: routes.barcode,
-		name: "barcode",
-		element: <PrintBarcode />,
 		route: Route,
 	},
 	{
@@ -447,25 +396,10 @@ export const publicRoutes = [
 		route: Route,
 	},
 	{
-		id: 38,
-		path: routes.departmentgrid,
-		name: "departmentgrid",
-		element: <DepartmentGrid />,
-		route: Route,
-	},
-	{
 		id: 39,
 		path: routes.placeholder,
 		name: "placeholder",
 		element: <Placeholder />,
-		route: Route,
-	},
-
-	{
-		id: 39,
-		path: routes.departmentlist,
-		name: "departmentlist",
-		element: <DepartmentList />,
 		route: Route,
 	},
 	{
@@ -474,14 +408,6 @@ export const publicRoutes = [
 		name: "rating",
 		element: <Rating />,
 	},
-
-	{
-		id: 40,
-		path: routes.designation,
-		name: "designation",
-		element: <Designation />,
-		route: Route,
-	},
 	{
 		id: 41,
 		path: routes.texteditor,
@@ -489,27 +415,11 @@ export const publicRoutes = [
 		element: <TextEditor />,
 		route: Route,
 	},
-
-	{
-		id: 41,
-
-		path: routes.shift,
-		name: "shift",
-		element: <Shift />,
-		route: Route,
-	},
 	{
 		id: 42,
 		path: routes.counter,
 		name: "counter",
 		element: <Counter />,
-		route: Route,
-	},
-	{
-		id: 42,
-		path: routes.attendanceemployee,
-		name: "attendanceemployee",
-		element: <AttendanceEmployee />,
 		route: Route,
 	},
 	{
@@ -815,20 +725,6 @@ export const publicRoutes = [
 		route: Route,
 	},
 	{
-		id: 60,
-		path: routes.categorylist,
-		name: "categorylist",
-		element: <CategoryList />,
-		route: Route,
-	},
-	{
-		id: 64,
-		path: routes.subcategories,
-		name: "subcategories",
-		element: <SubCategories />,
-		route: Route,
-	},
-	{
 		id: 65,
 		path: routes.editproduct,
 		name: "editproduct",
@@ -840,20 +736,6 @@ export const publicRoutes = [
 		path: routes.email,
 		name: "email",
 		element: <Email />,
-		route: Route,
-	},
-	{
-		id: 66,
-		path: routes.variantattributes,
-		name: "variantattributes",
-		element: <VariantAttributes />,
-		route: Route,
-	},
-	{
-		id: 67,
-		path: routes.qrcode,
-		name: "qrcode",
-		element: <QRcode />,
 		route: Route,
 	},
 	{
@@ -976,13 +858,6 @@ export const publicRoutes = [
 		route: Route,
 	},
 	{
-		id: 86,
-		path: routes.storelist,
-		name: "storelist",
-		element: <StoreList />,
-		route: Route,
-	},
-	{
 		id: 87,
 		path: routes.managestock,
 		name: "managestock",
@@ -1088,27 +963,6 @@ export const publicRoutes = [
 		route: Route,
 	},
 	{
-		id: 99,
-		path: routes.pos,
-		name: "pos",
-		element: <Pos />,
-		route: Route,
-	},
-	{
-		id: 100,
-		path: routes.attendanceadmin,
-		name: "attendanceadmin",
-		element: <AttendanceAdmin />,
-		route: Route,
-	},
-	{
-		id: 101,
-		path: routes.payslip,
-		name: "payslip",
-		element: <Payslip />,
-		route: Route,
-	},
-	{
 		id: 102,
 		path: routes.saleslist,
 		name: "saleslist",
@@ -1124,23 +978,9 @@ export const publicRoutes = [
 	},
 	{
 		id: 102,
-		path: routes.holidays,
-		name: "holidays",
-		element: <Holidays />,
-		route: Route,
-	},
-	{
-		id: 102,
 		path: routes.salesreturn,
 		name: "salesreturn",
 		element: <SalesReturn />,
-		route: Route,
-	},
-	{
-		id: 103,
-		path: routes.quotationlist,
-		name: "quotationlist",
-		element: <QuotationList />,
 		route: Route,
 	},
 	{
@@ -1207,38 +1047,10 @@ export const publicRoutes = [
 		route: Route,
 	},
 	{
-		id: 111,
-		path: routes.leavesadmin,
-		name: "leavesadmin",
-		element: <LeavesAdmin />,
-		route: Route,
-	},
-	{
-		id: 112,
-		path: routes.leavesemployee,
-		name: "leavesemployee",
-		element: <LeavesEmployee />,
-		route: Route,
-	},
-	{
-		id: 113,
-		path: routes.leavestype,
-		name: "leavestype",
-		element: <LeaveTypes />,
-		route: Route,
-	},
-	{
 		id: 113,
 		path: routes.productdetails,
 		name: "productdetails",
 		element: <ProductDetail />,
-		route: Route,
-	},
-	{
-		id: 114,
-		path: routes.warehouses,
-		name: "warehouses",
-		element: <WareHouses />,
 		route: Route,
 	},
 	{
@@ -1252,8 +1064,8 @@ export const publicRoutes = [
 		id: 117,
 		path: "/",
 		name: "Root",
-		// element: <Dashboard />,
-		element: <Navigate to="/signin" />,
+		element: <Dashboard />,
+		// element: <Navigate to="/signin" />,
 		route: Route,
 	},
 	{
@@ -1263,23 +1075,8 @@ export const publicRoutes = [
 		element: <BankSettingGrid />,
 		route: Route,
 	},
-	{
-		id: 119,
-		path: routes.payrollList,
-		name: "payroll-list",
-		element: <PayrollList />,
-		route: Route,
-	},
 ];
-export const posRoutes = [
-	{
-		id: 1,
-		path: routes.pos,
-		name: "pos",
-		element: <Pos />,
-		route: Route,
-	},
-];
+export const posRoutes = [{}];
 
 export const pagesRoute = [
 	{

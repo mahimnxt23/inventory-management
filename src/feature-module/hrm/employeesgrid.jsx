@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
 	Edit,
 	MoreVertical,
@@ -12,28 +13,61 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import { setToogleHeader } from "../../core/redux/action";
 import { all_routes } from "../../Router/all_routes";
+import { setToogleHeader } from "../../core/redux/action";
 import { getData } from "../../utils/api";
 
 const EmployeesGrid = () => {
 	const route = all_routes;
-
 	const dispatch = useDispatch();
 	const data = useSelector((state) => state.toggle_header);
+
+	const [employees, setEmployees] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	const fetchEmployeeData = async () => {
+		setLoading(true);
+		try {
+			const [empList] = await Promise.all([getData("/employees")]);
+			setEmployees(empList);
+		} catch (err) {
+			setError(err.message);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleDelete = async (employee) => {
+		try {
+			const response = await axios.delete(
+				`https://billing.neuralionicsoft.com/api/employees/${employee.id}/`
+			);
+			console.log("Employee deleted successfully:", response.data);
+			fetchEmployeeData(); // Re-fetch employee data after delete
+		} catch (error) {
+			console.error("Error deleting employee:", error);
+		}
+	};
+
+	useEffect(() => {
+		fetchEmployeeData();
+	}, []);
 
 	const renderRefreshTooltip = (props) => (
 		<Tooltip id="refresh-tooltip" {...props}>
 			Refresh
 		</Tooltip>
 	);
+
 	const renderCollapseTooltip = (props) => (
 		<Tooltip id="refresh-tooltip" {...props}>
 			Collapse
 		</Tooltip>
 	);
+
 	const MySwal = withReactContent(Swal);
-	const showConfirmationAlert = () => {
+	const showConfirmationAlert = (employee) => {
 		MySwal.fire({
 			title: "Are you sure?",
 			text: "You won't be able to revert this!",
@@ -44,6 +78,8 @@ const EmployeesGrid = () => {
 			cancelButtonText: "Cancel",
 		}).then((result) => {
 			if (result.isConfirmed) {
+				handleDelete(employee);
+
 				MySwal.fire({
 					title: "Deleted!",
 					text: "User has been deleted.",
@@ -57,28 +93,6 @@ const EmployeesGrid = () => {
 				MySwal.close();
 			}
 		});
-	};
-
-	const [employees, setEmployees] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
-
-	useEffect(() => {
-		fetchEmployeeData();
-	}, []);
-
-	const fetchEmployeeData = async () => {
-		setLoading(true);
-		try {
-			const [empList] = await Promise.all([getData("/employees")]);
-
-			// Store employee list
-			setEmployees(empList);
-		} catch (err) {
-			setError(err.message);
-		} finally {
-			setLoading(false);
-		}
 	};
 
 	return (
@@ -157,7 +171,10 @@ const EmployeesGrid = () => {
 														<ul className="dropdown-menu">
 															<li>
 																<Link
-																	to={route.editemployee}
+																	to={`${route.editemployee.replace(
+																		":id",
+																		employee.id
+																	)}`}
 																	className="dropdown-item"
 																>
 																	<Edit className="info-img" />
@@ -168,7 +185,9 @@ const EmployeesGrid = () => {
 																<Link
 																	to="#"
 																	className="dropdown-item confirm-text mb-0"
-																	onClick={showConfirmationAlert}
+																	onClick={() =>
+																		showConfirmationAlert(employee)
+																	}
 																>
 																	<Trash2 className="info-img" />
 																	Delete

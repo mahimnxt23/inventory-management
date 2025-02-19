@@ -3,19 +3,9 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { setToogleHeader } from "../../core/redux/action";
 
-const renderRefreshTooltip = (props) => (
-	<Tooltip id="refresh-tooltip" {...props}>
-		Refresh
-	</Tooltip>
-);
-const renderCollapseTooltip = (props) => (
-	<Tooltip id="refresh-tooltip" {...props}>
-		Collapse
-	</Tooltip>
-);
-
+// import { Edit, Trash2 } from "react-feather";
 import React, { useEffect, useState } from "react";
-import { Edit, Trash2 } from "react-feather";
+import { Trash2 } from "react-feather";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -27,7 +17,7 @@ const Customers = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const dispatch = useDispatch();
-	const data = useSelector((state) => state.customerdata);
+	const data = useSelector((state) => state.toggle_header);
 
 	useEffect(() => {
 		fetchCustomerData();
@@ -42,23 +32,6 @@ const Customers = () => {
 			setError(err.message);
 		} finally {
 			setLoading(false);
-		}
-	};
-
-	const deleteCustomer = async (id) => {
-		try {
-			const response = await fetch(`/api/customers/${id}`, {
-				method: "DELETE",
-			});
-
-			if (!response.ok) {
-				throw new Error("Failed to delete customer");
-			}
-
-			return true;
-		} catch (error) {
-			console.error("Error deleting customer:", error);
-			throw error;
 		}
 	};
 
@@ -80,21 +53,57 @@ const Customers = () => {
 		});
 	};
 
+	const deleteCustomer = async (id) => {
+		try {
+			const response = await fetch(
+				`https://billing.neuralionicsoft.com/api/customers/${id}`,
+				{
+					method: "DELETE",
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to delete customer");
+			}
+
+			return true;
+		} catch (error) {
+			console.error("Error deleting customer:", error);
+			throw error;
+		}
+	};
+
 	const handleDelete = async (id) => {
 		try {
-			await deleteCustomer(id);
-			setCustomers(customers.filter((customer) => customer.id !== id));
+			const isDeleted = await deleteCustomer(id);
 
-			MySwal.fire({
-				title: "Deleted!",
-				text: "Customer has been removed.",
-				icon: "success",
-				confirmButtonText: "OK",
-			});
+			if (isDeleted) {
+				setCustomers(customers.filter((customer) => customer.id !== id));
+
+				// Show success alert
+				MySwal.fire({
+					title: "Deleted!",
+					text: "Customer has been removed.",
+					icon: "success",
+					confirmButtonText: "OK",
+				});
+			}
 		} catch (error) {
+			// Show error alert
 			MySwal.fire("Error", "Could not delete customer!", "error");
 		}
 	};
+
+	const renderRefreshTooltip = (props) => (
+		<Tooltip id="refresh-tooltip" {...props}>
+			Refresh
+		</Tooltip>
+	);
+	const renderCollapseTooltip = (props) => (
+		<Tooltip id="refresh-tooltip" {...props}>
+			Collapse
+		</Tooltip>
+	);
 
 	const columns = [
 		{
@@ -112,19 +121,21 @@ const Customers = () => {
 			render: (_, record) => (
 				<div className="action-table-data">
 					<div className="edit-delete-action">
-						<Link
+						{/* <Link
 							className="me-2 p-2"
 							to="#"
 							data-bs-toggle="modal"
 							data-bs-target="#edit-units"
 						>
 							<Edit className="feather-edit" />
-						</Link>
+						</Link> */}
 
 						<Link
 							className="confirm-text p-2"
 							to="#"
-							onClick={() => showConfirmationAlert(record.id)}
+							onClick={() => {
+								showConfirmationAlert(record.id);
+							}}
 						>
 							<Trash2 className="feather-trash-2" />
 						</Link>

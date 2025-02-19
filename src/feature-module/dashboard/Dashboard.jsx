@@ -125,8 +125,8 @@ const Dashboard = () => {
 
 			// Update all state variables with the fetched data
 			setDashboardData({
-				totalMedicines: stats.total_medicine_quantity,
-				totalBottles: stats.total_bottle_quantity,
+				totalMedicines: stats.total_medicine,
+				totalBottles: stats.total_medicine_quantity,
 				totalOrders: stats.total_order,
 				revenueAmount: stats.total_purchase_amount,
 				purchaseAmount: stats.total_purchase_amount,

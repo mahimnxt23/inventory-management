@@ -46,6 +46,13 @@ export const SidebarData = [
 				icon: <Icon.Box />,
 			},
 			{
+				label: "Medicine Category",
+				link: "/category-list",
+				icon: <Icon.Codepen />,
+				showSubRoute: false,
+				submenu: false,
+			},
+			{
 				// label: "Units",
 				label: "Bottle Breakage",
 				link: "/units",

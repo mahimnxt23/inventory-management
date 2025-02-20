@@ -137,9 +137,7 @@ const ProductList = () => {
 					<div className="edit-delete-action">
 						<Link
 							className="me-2 p-2"
-							to="#"
-							data-bs-toggle="modal"
-							data-bs-target="#edit-units"
+							to={route.editproduct.replace(":id", record.id)}
 						>
 							<Edit className="feather-edit" />
 						</Link>

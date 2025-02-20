@@ -147,7 +147,7 @@ const AddProduct = () => {
 									>
 										<div className="accordion-body">
 											<div className="row">
-												<div className="col-lg-4 col-sm-6 col-12">
+												<div className="col-lg-2 col-sm-6 col-12">
 													<div className="mb-3 add-product">
 														<label>Medicine Image</label>
 														<div className="image-upload">
@@ -167,10 +167,10 @@ const AddProduct = () => {
 																		<img
 																			src={imagePreview}
 																			alt="Preview"
-																			className="img-thumbnail"
+																			className="img-thumbnail img-fluid"
 																			style={{
-																				height: "auto",
-																				width: "auto",
+																				height: "200px",
+																				width: "200px",
 																				objectFit: "cover",
 																			}}
 																		/>
@@ -191,7 +191,7 @@ const AddProduct = () => {
 													</div>
 												</div>
 
-												<div className="col-lg-8">
+												<div className="col-lg-10">
 													<div className="row">
 														<div className="col-lg-6 col-sm-6 col-12">
 															<div className="mb-3">

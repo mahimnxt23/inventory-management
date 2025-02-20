@@ -1,76 +1,60 @@
-import {
-	ChevronUp,
-	PlusCircle,
-	RotateCcw,
-} from "feather-icons-react/build/IconComponents";
+import axios from "axios";
+// Edit,
+import { Trash2 } from "feather-icons-react/build/IconComponents";
 import React, { useEffect, useState } from "react";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { Edit, Trash2 } from "react-feather";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import { getUnitsdata } from "../../core/json/unitsdata";
 import AddUnit from "../../core/modals/inventory/addunit";
 import EditUnit from "../../core/modals/inventory/editunit";
 import Table from "../../core/pagination/datatable";
-import { setToogleHeader } from "../../core/redux/action";
 
-const renderRefreshTooltip = (props) => (
-	<Tooltip id="refresh-tooltip" {...props}>
-		Refresh
-	</Tooltip>
-);
-const renderCollapseTooltip = (props) => (
-	<Tooltip id="refresh-tooltip" {...props}>
-		Collapse
-	</Tooltip>
-);
+const API_URL = "https://billing.neuralionicsoft.com/api/bottlebreakages/";
 
 export const Units = () => {
-	const [units, setUnits] = useState([]);
+	const [units, setUnits] = useState([]); // Ensure state is always an array
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	const dispatch = useDispatch();
-	const data = useSelector((state) => state.toggle_header);
 
 	useEffect(() => {
 		fetchUnitsData();
 	}, []);
 
+	// Fetch Bottle Breakage Data
 	const fetchUnitsData = async () => {
 		setLoading(true);
 		try {
-			const UnitsList = await getUnitsdata();
-			setUnits(UnitsList);
+			const response = await axios.get(API_URL);
+
+			// Ensure the response is an array, even if empty
+			setUnits(Array.isArray(response.data) ? response.data : []);
 		} catch (err) {
 			setError(err.message);
+			setUnits([]); // Ensure state is reset
 		} finally {
 			setLoading(false);
 		}
 	};
 
+	// Delete Entry
 	const deleteUnit = async (id) => {
 		try {
-			const response = await fetch(`/api/bottlebreakages/${id}`, {
-				method: "DELETE",
+			await axios.delete(`${API_URL}${id}/`);
+			setUnits(units.filter((unit) => unit.id !== id));
+
+			Swal.fire({
+				title: "Deleted!",
+				text: "Entry has been removed.",
+				icon: "success",
+				confirmButtonText: "OK",
 			});
-
-			if (!response.ok) {
-				throw new Error("Failed to delete unit");
-			}
-
-			return true;
 		} catch (error) {
-			console.error("Error deleting unit:", error);
-			throw error;
+			Swal.fire("Error", "Could not delete entry!", "error");
 		}
 	};
 
-	const MySwal = withReactContent(Swal);
-
+	// Confirmation Alert Before Deletion
 	const showConfirmationAlert = (id) => {
-		MySwal.fire({
+		Swal.fire({
 			title: "Are you sure?",
 			text: "This action cannot be undone!",
 			showCancelButton: true,
@@ -80,60 +64,21 @@ export const Units = () => {
 			cancelButtonText: "Cancel",
 		}).then(async (result) => {
 			if (result.isConfirmed) {
-				await handleDelete(id);
+				await deleteUnit(id);
 			}
 		});
 	};
 
-	const handleDelete = async (id) => {
-		try {
-			await deleteUnit(id);
-			setUnits(units.filter((unit) => unit.id !== id));
-
-			MySwal.fire({
-				title: "Deleted!",
-				text: "Unit has been removed.",
-				icon: "success",
-				confirmButtonText: "OK",
-			});
-		} catch (error) {
-			MySwal.fire("Error", "Could not delete units!", "error");
-		}
-	};
-
+	// Table Columns
 	const columns = [
-		{
-			title: "Serial No.",
-			dataIndex: "id",
-			// dataIndex: "serialno",
-			// render: (_, __, index) => index + 1,
-			// sorter: (a, b) => a.serialno.length - b.serialno.length,
-		},
-		{
-			title: "Medicine name",
-			dataIndex: "medicine",
-			// sorter: (a, b) => a.medicinename.length - b.medicinename.length,
-		},
-		{
-			title: "Responsible Employee",
-			dataIndex: "responsible_employee",
-			// sorter: (a, b) => a.resemployee.length - b.resemployee.length,
-		},
-		{
-			title: "Lost quantity",
-			dataIndex: "lost_quantity",
-			// sorter: (a, b) => a.lostquantity.length - b.lostquantity.length,
-		},
-		{
-			title: "Reason",
-			dataIndex: "reason",
-			// sorter: (a, b) => a.reason.length - b.reason.length,
-		},
+		{ title: "Medicine ID", dataIndex: "medicine" },
+		{ title: "Responsible Employee", dataIndex: "responsible_employee" },
+		{ title: "Lost Quantity", dataIndex: "lost_quantity" },
+		{ title: "Reason", dataIndex: "reason" },
 		{
 			title: "Date",
 			dataIndex: "date_time",
-			render: (date) => new Date(date).toLocaleDateString(),
-			// sorter: (a, b) => a.date.length - b.date.length,
+			render: (date) => (date ? new Date(date).toLocaleDateString() : "N/A"),
 		},
 		{
 			title: "Action",
@@ -141,21 +86,22 @@ export const Units = () => {
 			render: (_, record) => (
 				<div className="action-table-data">
 					<div className="edit-delete-action">
-						<Link
+						{/* <Link
 							className="me-2 p-2"
 							to="#"
 							data-bs-toggle="modal"
 							data-bs-target="#edit-units"
 						>
-							<Edit className="feather-edit" />
-						</Link>
-
+							<Edit className="info-img" />
+							Edit
+						</Link> */}
 						<Link
 							className="confirm-text p-2"
 							to="#"
 							onClick={() => showConfirmationAlert(record.id)}
 						>
-							<Trash2 className="feather-trash-2" />
+							<Trash2 className="info-img" />
+							Delete
 						</Link>
 					</div>
 				</div>
@@ -163,8 +109,11 @@ export const Units = () => {
 		},
 	];
 
+	// Show loading state
 	if (loading) return <p>Loading...</p>;
-	if (error) return <p>Error: {error}</p>;
+
+	// Show error message if API request fails
+	if (error) return <p className="text-danger">Error: {error}</p>;
 
 	return (
 		<>
@@ -177,30 +126,6 @@ export const Units = () => {
 								<h6>Manage your broken units</h6>
 							</div>
 						</div>
-						<ul className="table-top-head">
-							<li>
-								<OverlayTrigger placement="top" overlay={renderRefreshTooltip}>
-									<Link data-bs-toggle="tooltip" data-bs-placement="top">
-										<RotateCcw />
-									</Link>
-								</OverlayTrigger>
-							</li>
-							<li>
-								<OverlayTrigger placement="top" overlay={renderCollapseTooltip}>
-									<Link
-										data-bs-toggle="tooltip"
-										data-bs-placement="top"
-										id="collapse-header"
-										className={data ? "active" : ""}
-										onClick={() => {
-											dispatch(setToogleHeader(!data));
-										}}
-									>
-										<ChevronUp />
-									</Link>
-								</OverlayTrigger>
-							</li>
-						</ul>
 						<div className="page-btn">
 							<a
 								to="#"
@@ -208,20 +133,25 @@ export const Units = () => {
 								data-bs-toggle="modal"
 								data-bs-target="#add-units"
 							>
-								<PlusCircle className="me-2" />
 								Add New Entry
 							</a>
 						</div>
 					</div>
-					{/* /product list */}
-					<div className="card table-list-card">
-						<div className="card-body">
-							<div className="table-responsive">
-								<Table columns={columns} dataSource={units} />
+
+					{/* Show a message when there are no entries */}
+					{units.length === 0 ? (
+						<div className="alert alert-info text-center">
+							No bottle breakage records found.
+						</div>
+					) : (
+						<div className="card table-list-card">
+							<div className="card-body">
+								<div className="table-responsive">
+									<Table columns={columns} dataSource={units} rowKey="id" />
+								</div>
 							</div>
 						</div>
-					</div>
-					{/* /product list */}
+					)}
 				</div>
 				<AddUnit />
 				<EditUnit />
